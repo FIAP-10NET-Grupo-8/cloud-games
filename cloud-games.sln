@@ -23,6 +23,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "spikes-e-pocs", "spikes-e-p
 		spikes-e-pocs\TEMPLATE-SPIKE.md = spikes-e-pocs\TEMPLATE-SPIKE.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "user", "user", "{6B31C9F4-023C-4367-810F-10CC6E60601F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GH-7-Investigacao-Hashing-de-Senhas", "GH-7-Investigacao-Hashing-de-Senhas", "{0BCDAAD6-D0B3-4EC7-9683-3B8093A2107E}"
+	ProjectSection(SolutionItems) = preProject
+		spikes-e-pocs\user\GH-7-Investigacao-Hashing-de-Senhas\SPIKE.md = spikes-e-pocs\user\GH-7-Investigacao-Hashing-de-Senhas\SPIKE.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fiap.CloudGames.POCs.User.Hashing", "spikes-e-pocs\user\GH-7-Investigacao-Hashing-de-Senhas\Fiap.CloudGames.POCs.User.Hashing\Fiap.CloudGames.POCs.User.Hashing.csproj", "{BC6502BB-D215-D5F9-A832-CCA000CB1FA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +58,10 @@ Global
 		{2FF32398-B664-4938-8F72-DA82B9030E22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FF32398-B664-4938-8F72-DA82B9030E22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FF32398-B664-4938-8F72-DA82B9030E22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC6502BB-D215-D5F9-A832-CCA000CB1FA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC6502BB-D215-D5F9-A832-CCA000CB1FA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC6502BB-D215-D5F9-A832-CCA000CB1FA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC6502BB-D215-D5F9-A832-CCA000CB1FA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +72,9 @@ Global
 		{74325975-591F-45CE-8561-322B03407A33} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{F6C3F0F4-F037-48B0-8E84-38D2E58DFF22} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{2FF32398-B664-4938-8F72-DA82B9030E22} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{6B31C9F4-023C-4367-810F-10CC6E60601F} = {FB2153A9-E740-4CDC-B32A-27C8B4C11333}
+		{0BCDAAD6-D0B3-4EC7-9683-3B8093A2107E} = {6B31C9F4-023C-4367-810F-10CC6E60601F}
+		{BC6502BB-D215-D5F9-A832-CCA000CB1FA2} = {0BCDAAD6-D0B3-4EC7-9683-3B8093A2107E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3F3C1E0E-569A-49E8-B3A8-52EC20D7C73F}
