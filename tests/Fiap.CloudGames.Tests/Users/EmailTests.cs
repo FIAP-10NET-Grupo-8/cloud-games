@@ -1,6 +1,4 @@
-using System;
-using Fiap.CloudGames.Domain.Users.UserObjects;
-using Xunit;
+using Fiap.CloudGames.Domain.Users.ValueObjects;
 
 namespace Fiap.CloudGames.Tests.Users;
 

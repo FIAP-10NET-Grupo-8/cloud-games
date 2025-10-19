@@ -1,4 +1,4 @@
-﻿namespace Fiap.CloudGames.Domain.Users.UserObjects;
+﻿namespace Fiap.CloudGames.Domain.Users.ValueObjects;
 
 /// <summary>
 /// Value Object representing a Password with hashing and validation.
@@ -17,14 +17,16 @@ public class Password
 	/// </summary>
 	/// <param name="plainTextPassword"></param>
 	/// <returns></returns>
-	/// <exception cref="ArgumentException"></exception>
+	/// <exception cref="ArgumentException">
+	/// Throws if the password does not meet complexity requirements.
+	/// </exception>
 	public static Password Create(string plainTextPassword)
 	{
 		// Regra: Mínimo 8 caracteres com números, letras e caracteres especiais.
 
 		if (string.IsNullOrWhiteSpace(plainTextPassword) || plainTextPassword.Length < 8)
 		{
-			throw new ArgumentException("Password must be at least 8 characters long.");
+			throw new ArgumentException("A senha deve ter pelo menos 8 caracteres.");
 		}
 
 		bool hasLetter = false, hasDigit = false, hasSpecial = false;
@@ -37,13 +39,18 @@ public class Password
 
 		if (!(hasLetter && hasDigit && hasSpecial))
 		{
-			throw new ArgumentException("Password must contain letters, numbers, and special characters.");
+			throw new ArgumentException("A senha deve conter letras, números e caracteres especiais.");
 		}
 
 		var passwordHash = BCrypt.Net.BCrypt.HashPassword(plainTextPassword);
 		return new Password(passwordHash);
 	}
 
+	/// <summary>
+	/// Method to verify a plain text password against the stored hashed password.
+	/// </summary>
+	/// <param name="plainTextPassword"></param>
+	/// <returns></returns>
 	public bool Verify(string plainTextPassword)
 	{
 		return BCrypt.Net.BCrypt.Verify(plainTextPassword, Hash);

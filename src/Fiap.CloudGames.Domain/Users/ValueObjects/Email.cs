@@ -1,6 +1,6 @@
 ﻿using System.Net.Mail;
 
-namespace Fiap.CloudGames.Domain.Users.UserObjects;
+namespace Fiap.CloudGames.Domain.Users.ValueObjects;
 
 /// <summary>
 /// Value Object representing an Email address with validation.
@@ -24,7 +24,7 @@ public class Email
 	{
 		if (string.IsNullOrWhiteSpace(emailAddress))
 		{
-			throw new ArgumentException("Email address cannot be empty.", nameof(emailAddress));
+			throw new ArgumentException("Endereço de email não pode ser vazio.", nameof(emailAddress));
 		}
 
 		try
@@ -37,7 +37,7 @@ public class Email
 		}
 		catch (FormatException)
 		{
-			throw new ArgumentException("Invalid email format.", nameof(emailAddress));
+			throw new ArgumentException("Formato de email inválido.", nameof(emailAddress));
 		}
 
 		return new Email(emailAddress);

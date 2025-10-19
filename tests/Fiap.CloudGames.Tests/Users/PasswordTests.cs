@@ -1,6 +1,4 @@
-using System;
-using Fiap.CloudGames.Domain.Users.UserObjects;
-using Xunit;
+using Fiap.CloudGames.Domain.Users.ValueObjects;
 
 namespace Fiap.CloudGames.Tests.Users;
 
@@ -10,7 +8,7 @@ public class PasswordTests
     public void Create_ValidPassword_HashesPassword()
     {
         string plain = "Strong@Password123";
-        var pw = Password.Create(plain);
+        var pw = Password.Create("Strong@Password123");
         Assert.NotNull(pw.Hash);
         Assert.NotEqual(plain, pw.Hash);
         Assert.True(pw.Verify(plain));
