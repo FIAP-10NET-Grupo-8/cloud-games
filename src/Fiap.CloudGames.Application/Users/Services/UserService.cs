@@ -29,6 +29,9 @@ public class UserService(IUserRepository repository) : IUserService
 
 	public async Task<UserDto> RegisterAsync(UserRegisterDto dto)
 	{
+		var existing = await _repository.GetByEmailAsync(dto.Email);
+		if (existing != null) throw new ArgumentException("Usuário com este e-mail já existe.");
+
 		var user = User.Create(dto.Name, dto.Email, dto.Password, UserRole.User, UserStatus.Inactive);
 		await _repository.AddAsync(user);
 		return Map(user);
@@ -70,6 +73,9 @@ public class UserService(IUserRepository repository) : IUserService
 
 	public async Task<UserDto> CreateByAdminAsync(AdminUserCreateDto dto)
 	{
+		var existing = await _repository.GetByEmailAsync(dto.Email);
+		if (existing != null) throw new ArgumentException("Usuário com este e-mail já existe.");
+
 		var user = User.Create(dto.Name, dto.Email, dto.Password, dto.Role, UserStatus.Inactive);
 		await _repository.AddAsync(user);
 		return Map(user);
@@ -81,7 +87,17 @@ public class UserService(IUserRepository repository) : IUserService
 		if (user == null) return null;
 
 		if (!string.IsNullOrWhiteSpace(dto.Name)) user.UpdateName(dto.Name);
-		if (!string.IsNullOrWhiteSpace(dto.Email)) user.UpdateEmail(dto.Email);
+
+		if (!string.IsNullOrWhiteSpace(dto.Email))
+		{
+			if (!string.Equals(user.Email.Address, dto.Email, StringComparison.OrdinalIgnoreCase))
+			{
+				var other = await _repository.GetByEmailAsync(dto.Email);
+				if (other != null && other.Id != user.Id) throw new ArgumentException("Usuário com este e-mail já existe.");
+			}
+			user.UpdateEmail(dto.Email);
+		}
+
 		if (dto.Role.HasValue) user.SetRole(dto.Role.Value);
 		if (dto.Status.HasValue) user.SetStatus(dto.Status.Value);
 		if (dto.EmailConfirmed.HasValue)
