@@ -4,4 +4,4 @@
 /// DTO para solicitar redefinição de senha.
 /// </summary>
 /// <param name="Email">Email associado à conta.</param>
-public record RequestResetDto(string Email);
+public record ForgotPasswordDto(string Email);

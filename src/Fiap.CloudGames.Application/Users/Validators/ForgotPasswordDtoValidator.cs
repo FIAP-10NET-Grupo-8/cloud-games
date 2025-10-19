@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace Fiap.CloudGames.Application.Users.Validators;
 
-public class RequestResetDtoValidator : AbstractValidator<RequestResetDto>
+public class ForgotPasswordDtoValidator : AbstractValidator<ForgotPasswordDto>
 {
-	public RequestResetDtoValidator()
+	public ForgotPasswordDtoValidator()
 	{
 		RuleFor(x => x.Email)
 			.NotEmpty().WithMessage("O email é obrigatório.")
