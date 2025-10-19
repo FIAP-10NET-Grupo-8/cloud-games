@@ -5,7 +5,7 @@ namespace Fiap.CloudGames.Infrastructure.Users.Repositories;
 
 public class InMemoryUserRepository : IUserRepository
 {
-    private readonly List<User> _users = [];
+    private static readonly List<User> _users = [];
 
 	public Task<User?> GetByIdAsync(Guid id)
 	{
