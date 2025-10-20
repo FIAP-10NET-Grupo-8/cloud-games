@@ -34,25 +34,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup .NET 8.x (with NuGet cache)
+      - name: Setup .NET 8.x
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
-          cache: true
 
       - name: Restore
-        run: |
-          dotnet restore src
-          dotnet restore tests
+        run: dotnet restore ./cloud-games.sln
 
       - name: Build (Release)
-        run: |
-          dotnet build src --configuration Release --no-restore
-          dotnet build tests --configuration Release --no-restore
+        run: dotnet build ./cloud-games.sln --configuration Release --no-restore
 
       - name: Test (with coverage)
         run: >
-          dotnet test tests
+          dotnet test ./cloud-games.sln
           --configuration Release
           --no-build
           --logger "trx;LogFileName=test_results.trx"
