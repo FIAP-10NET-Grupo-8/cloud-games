@@ -107,13 +107,26 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	/// <summary>
 	/// Cria um usuário com privilégios administrativos (necessário role Administrator).
 	/// </summary>
-	/// <param name="dto">DTO contendo nome, email, senha e role.</param>
+	/// <param name="dto">DTO contendo nome, email e role.</param>
 	[HttpPost]
 	//[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> CreateByAdmin([FromBody] AdminUserCreateDto dto)
 	{
 		var created = await _userService.CreateByAdminAsync(dto);
+		var token = await _userService.GenerateFirstAccessAsync(created.Email);
+		await _emailSender.SendEmailAsync(created.Email, "Acesso inicial - defina sua senha", $"Utilize este token para definir sua senha inicial: {token}");
 		return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+	}
+
+	/// <summary>
+	/// Endpoint para primeiro acesso: define a senha usando o token recebido por email.
+	/// </summary>
+	[HttpPost("first-access")]
+	public async Task<IActionResult> FirstAccess([FromBody] FirstAccessDto dto)
+	{
+		var ok = await _userService.FirstAccessAsync(dto.Token, dto.NewPassword);
+		if (!ok) return BadRequest(new { message = "Token inválido ou expirado." });
+		return Ok(new { message = "Senha definida com sucesso." });
 	}
 
 	/// <summary>

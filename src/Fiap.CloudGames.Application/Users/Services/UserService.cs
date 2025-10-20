@@ -71,12 +71,31 @@ public class UserService(IUserRepository repository) : IUserService
 		return result;
 	}
 
+	public async Task<string> GenerateFirstAccessAsync(string email)
+	{
+		var user = await _repository.GetByEmailAsync(email) ?? throw new ArgumentException("Usuário não encontrado.");
+		var token = user.GenerateFirstAccessToken(TimeSpan.FromHours(24));
+		await _repository.UpdateAsync(user);
+		return token;
+	}
+
+	public async Task<bool> FirstAccessAsync(string token, string newPassword)
+	{
+		var user = await _repository.GetByFirstAccessTokenAsync(token);
+		if (user == null) return false;
+		var result = user.CompleteFirstAccess(token, newPassword);
+		if (result) await _repository.UpdateAsync(user);
+		return result;
+	}
+
 	public async Task<UserDto> CreateByAdminAsync(AdminUserCreateDto dto)
 	{
 		var existing = await _repository.GetByEmailAsync(dto.Email);
 		if (existing != null) throw new ArgumentException("Usuário com este e-mail já existe.");
 
-		var user = User.Create(dto.Name, dto.Email, dto.Password, dto.Role, UserStatus.Inactive);
+		// The user will set their own password via first access flow, but we need to have a valid password at creation time.
+		var tempPassword = GenerateTemporaryPassword();
+		var user = User.Create(dto.Name, dto.Email, tempPassword, dto.Role, UserStatus.Inactive);
 		await _repository.AddAsync(user);
 		return Map(user);
 	}
@@ -126,4 +145,10 @@ public class UserService(IUserRepository repository) : IUserService
 	}
 
 	private static UserDto Map(User user) => new(user.Id, user.Name, user.Email.Address, user.Role, user.EmailConfirmed, user.CreatedAt);
+
+	private static string GenerateTemporaryPassword()
+	{
+		var guidPart = Guid.NewGuid().ToString("N");
+		return $"Aa1!{guidPart[..8]}";
+	}
 }

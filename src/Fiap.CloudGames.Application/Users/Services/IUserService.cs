@@ -15,6 +15,9 @@ public interface IUserService
 	Task<string> GeneratePasswordResetAsync(string email);
 	Task<bool> ResetPasswordAsync(string token, string newPassword);
 
+	Task<string> GenerateFirstAccessAsync(string email);
+	Task<bool> FirstAccessAsync(string token, string newPassword);
+
 	Task<UserDto> CreateByAdminAsync(AdminUserCreateDto dto);
 	Task<UserDto?> UpdateAsync(AdminUserUpdateDto dto);
 	Task DeleteAsync(Guid id);

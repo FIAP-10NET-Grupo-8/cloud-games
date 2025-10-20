@@ -19,10 +19,12 @@ public class User
 	public string? ConfirmationToken { get; private set; }
 	public string? PasswordResetToken { get; private set; }
 	public DateTime? PasswordResetExpiresAt { get; private set; }
+	public string? FirstAccessToken { get; private set; }
+	public DateTime? FirstAccessExpiresAt { get; private set; }
 
 	public bool IsActive => Status == UserStatus.Active;
 
-	private User(Guid id, string name, Email email, Password password, DateTime createdAt, UserRole role = UserRole.User, UserStatus status = UserStatus.Inactive, bool emailConfirmed = false, string? confirmationToken = null, string? passwordResetToken = null, DateTime? passwordResetExpiresAt = null)
+	private User(Guid id, string name, Email email, Password password, DateTime createdAt, UserRole role = UserRole.User, UserStatus status = UserStatus.Inactive, bool emailConfirmed = false, string? confirmationToken = null, string? passwordResetToken = null, DateTime? passwordResetExpiresAt = null, string? firstAccessToken = null, DateTime? firstAccessExpiresAt = null)
 	{
 		Id = id;
 		Name = name;
@@ -35,6 +37,8 @@ public class User
 		ConfirmationToken = confirmationToken;
 		PasswordResetToken = passwordResetToken;
 		PasswordResetExpiresAt = passwordResetExpiresAt;
+		FirstAccessToken = firstAccessToken;
+		FirstAccessExpiresAt = firstAccessExpiresAt;
 	}
 
 	/// <summary>
@@ -206,6 +210,39 @@ public class User
 		Password = newPassword;
 		PasswordResetToken = null;
 		PasswordResetExpiresAt = null;
+		return true;
+	}
+
+	/// <summary>
+	/// Generates a token for first access (invitation) flow.
+	/// </summary>
+	/// <param name="validFor"></param>
+	/// <returns></returns>
+	public string GenerateFirstAccessToken(TimeSpan validFor)
+	{
+		FirstAccessToken = Guid.NewGuid().ToString("N");
+		FirstAccessExpiresAt = DateTime.UtcNow.Add(validFor);
+		return FirstAccessToken;
+	}
+
+	/// <summary>
+	/// Completes first access using the token and sets the initial password.
+	/// </summary>
+	/// <param name="token"></param>
+	/// <param name="newPlainPassword"></param>
+	/// <returns></returns>
+	public bool CompleteFirstAccess(string token, string newPlainPassword)
+	{
+		if (string.IsNullOrEmpty(FirstAccessToken) || FirstAccessToken != token) return false;
+		if (!FirstAccessExpiresAt.HasValue || FirstAccessExpiresAt.Value < DateTime.UtcNow) return false;
+
+		var newPassword = Password.Create(newPlainPassword);
+		Password = newPassword;
+		FirstAccessToken = null;
+		FirstAccessExpiresAt = null;
+
+		MarkEmailConfirmed();
+		Status = UserStatus.Active;
 		return true;
 	}
 }

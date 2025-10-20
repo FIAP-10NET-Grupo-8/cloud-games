@@ -32,6 +32,11 @@ public class InMemoryUserRepository : IUserRepository
 		return Task.FromResult(_users.FirstOrDefault(u => u.PasswordResetToken == token));
 	}
 
+	public Task<User?> GetByFirstAccessTokenAsync(string token)
+	{
+		return Task.FromResult(_users.FirstOrDefault(u => u.FirstAccessToken == token));
+	}
+
 	public Task AddAsync(User user)
 	{
 		_users.Add(user);

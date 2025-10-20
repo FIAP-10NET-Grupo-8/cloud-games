@@ -15,12 +15,6 @@ public class AdminUserCreateDtoValidator : AbstractValidator<AdminUserCreateDto>
 			.NotEmpty().WithMessage("O email é obrigatório.")
 			.EmailAddress().WithMessage("O email deve ter formato válido.");
 
-		RuleFor(x => x.Password)
-			.NotEmpty().WithMessage("A senha é obrigatória.")
-			.MinimumLength(8).WithMessage("A senha deve ter pelo menos 8 caracteres.")
-			.Matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z0-9]).+$")
-			.WithMessage("A senha deve conter letras, números e caracteres especiais.");
-
 		RuleFor(x => x.Role)
 			.IsInEnum().WithMessage("Role inválido.");
 	}
