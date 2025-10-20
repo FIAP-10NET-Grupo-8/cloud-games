@@ -1,76 +1,84 @@
-# Processo de ColaboraÁ„o ó FIAP Cloud Games
+# Processo de Colabora√ß√£o ‚Äî FIAP Cloud Games
 
-Este documento descreve o fluxo de trabalho recomendado para colaborar no repositÛrio. Use-o como referÍncia para criar issues, branches e pull requests de forma padronizada.
+Este documento descreve o fluxo de trabalho recomendado para colaborar no reposit√≥rio. Use-o como refer√™ncia para criar issues, branches e pull requests de forma padronizada.
 
-## Vis„o geral do fluxo
+## Vis√£o geral do fluxo
 
 1. Criar a Issue no GitHub.
-2. Criar branch baseada no n˙mero da Issue.
+2. Criar branch baseada no n√∫mero da Issue.
 3. Iniciar trabalho (atualizar status e assumir a Issue).
 4. Desenvolver com commits claros e pequenos.
-5. Abrir Pull Request vinculado ‡ Issue.
-6. Revis„o, aprovaÁ„o e merge.
+5. Abrir Pull Request vinculado √† Issue.
+6. Revis√£o, aprova√ß√£o e merge.
 
 ## Regras para Issues
 
 - Sempre crie uma Issue para todo trabalho novo.
-- O tÌtulo da Issue deve comeÁar com o tipo: `feature:`, `bug:`, `docs:`, `chore:`, `spike:`, etc.
+- O t√≠tulo da Issue deve come√ßar com o tipo: `feature:`, `bug:`, `docs:`, `chore:`, `spike:`, etc.
   - Exemplo: `feature: endpoint de login com JWT`.
 - A Issue deve ter ao menos uma label relevante.
 - Adicione a Issue ao projeto `Cloud Games (TC1)` e marque com o status `To do (Ready)`.
-- Se a Issue depende de outra, registre o relacionamento em *Relationships* com `blocked by #N˙meroDaIssue` ou `blocks #N˙meroDaIssue`.
+- Se a Issue depende de outra, registre o relacionamento em *Relationships* com `blocked by #N√∫meroDaIssue` ou `blocks #N√∫meroDaIssue`.
+
+### Atalho pelo board
+
+Tamb√©m √© poss√≠vel criar Issues diretamente pelo **board Kanban**:
+
+1. No projeto `Cloud Games (TC1)`, clique em **‚ÄúAdd item ‚Üí Create new issue‚Äù**.  
+2. Selecione este reposit√≥rio (`cloud-games`) como destino.  
+3. O card j√° ser√° criado automaticamente como **Issue** e vinculado ao projeto.  
 
 ## Branch
 
-- Crie a branch logo apÛs abrir a Issue, seguindo o padr„o:
-  - `GH-[N˙meroDaIssue]-[DescricaoCurta]` (ex: `GH-123-ajustar-login`).
-  - Use `-` para separar palavras; mantenha a descriÁ„o curta e sem caracteres especiais.
+- Crie a branch logo ap√≥s abrir a Issue, seguindo o padr√£o:
+  - `GH-[N√∫meroDaIssue]-[DescricaoCurta]` (ex: `GH-123-ajustar-login`).
+  - Use `-` para separar palavras; mantenha a descri√ß√£o curta e sem caracteres especiais.
 
-## InÌcio do trabalho
+## In√≠cio do trabalho
 
-- Ao comeÁar, atualize o cart„o da Issue para `In Progress` no projeto `Cloud Games (TC1)`.
-- Adicione seu usu·rio em `Assignees` para sinalizar quem est· trabalhando.
+- Ao come√ßar, atualize o cart√£o da Issue para `In Progress` no projeto `Cloud Games (TC1)`.
+- Adicione seu usu√°rio em `Assignees` para sinalizar quem est√° trabalhando.
 
 ## Commits
 
-- Prefira commits pequenos e atÙmicos.
-- Use mensagens claras. Sugest„o de formato: `tipo(scope): descriÁ„o curta` (opcional):
+- Prefira commits pequenos e at√¥micos.
+- Use mensagens claras. Sugest√£o de formato: `tipo(scope): descri√ß√£o curta` (opcional):
   - `feat(auth): adicionar rota de refresh token`
-  - `fix(users): corrigir validaÁ„o de e-mail`
-- Inclua notas importantes no corpo do commit quando necess·rio.
-- Se o merge fechar a Issue, inclua no ˙ltimo commit ou no PR: `Closes #N˙meroDaIssue`.
+  - `fix(users): corrigir valida√ß√£o de e-mail`
+- Inclua notas importantes no corpo do commit quando necess√°rio.
+- Se o merge fechar a Issue, inclua no √∫ltimo commit ou no PR: `Closes #N√∫meroDaIssue`.
 
 ## Pull Request (PR)
 
 - Ao finalizar, atualize o status da Issue para `Review / QA`.
-- Abra um PR vinculado ‡ Issue e selecione ao menos um revisor.
+- Abra um PR vinculado √† Issue e selecione ao menos um revisor.
 - No PR inclua:
-  - DescriÁ„o do que foi feito e por quÍ.
-  - ReferÍncia ‡ Issue (ex: `Closes #123`).
-  - Checklist de validaÁ„o (ex.: testes unit·rios, passos manuais).
+  - Descri√ß√£o do que foi feito e por qu√™.
+  - Refer√™ncia √† Issue (ex: `Closes #123`).
+  - Checklist de valida√ß√£o (ex.: testes unit√°rios, passos manuais).
   - Capturas de tela ou logs quando relevantes.
-- Marque reviewers e, se aplic·vel, assignees para QA.
+- Marque reviewers e, se aplic√°vel, assignees para QA.
 
-## Revis„o e Merge
+## Revis√£o e Merge
 
-- Aguarde aprovaÁ„o de pelo menos um revisor.
-- Realize o merge seguindo a estratÈgia do time (squash, rebase ou merge).
+- Aguarde aprova√ß√£o de pelo menos um revisor.
+- Realize o merge seguindo a estrat√©gia do time (squash, rebase ou merge).
 - Verifique se a Issue foi fechada automaticamente; caso negativo, feche manualmente.
 
-## Boas pr·ticas e recomendaÁıes
+## Boas pr√°ticas e recomenda√ß√µes
 
-- Escreva ou atualize testes automatizados quando aplic·vel.
+- Escreva ou atualize testes automatizados quando aplic√°vel.
 - Mantenha PRs pequenos e focados.
-- Documente decisıes importantes no PR ou na Issue.
-- Para spikes e POCs: siga o padr„o em `spikes-e-pocs/README.md` e inclua o n˙mero da Issue no nome da pasta e da branch.
-- Use labels e relationships para comunicar bloqueios e dependÍncias.
+- Documente decis√µes importantes no PR ou na Issue.
+- Para spikes e POCs: siga o padr√£o em `spikes-e-pocs/README.md` e inclua o n√∫mero da Issue no nome da pasta e da branch.
+- Use labels e relationships para comunicar bloqueios e depend√™ncias.
 
-## Modelos ˙teis (sugestıes)
+## Modelos √∫teis (sugest√µes)
 
-- TÌtulo de Issue: `tipo: descriÁ„o curta` (ex: `docs: atualizar README de deploy`).
-- Branch: `GH-<N˙mero>-<descriÁ„o>` (ex: `GH-42-corrigir-timezone`).
-- Mensagem de commit final: `feat(api): implementar login ó Closes #42`.
+- T√≠tulo de Issue: `tipo: descri√ß√£o curta` (ex: `docs: atualizar README de deploy`).
+- Branch: `GH-<N√∫mero>-<descri√ß√£o>` (ex: `GH-42-corrigir-timezone`).
+- Mensagem de commit final: `feat(api): implementar login ‚Äî Closes #42`.
 
 ---
 
-Este processo pode evoluir. Proponha melhorias criando uma Issue com `docs:` para discuss„o.
+Este processo pode evoluir. Proponha melhorias criando uma Issue com `docs:` para discuss√£o.
