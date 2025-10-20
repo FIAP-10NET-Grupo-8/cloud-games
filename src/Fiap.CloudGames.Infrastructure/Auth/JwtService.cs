@@ -1,4 +1,5 @@
 ﻿using Fiap.CloudGames.Domain.Users.Entities;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -6,9 +7,9 @@ using System.Text;
 
 namespace Fiap.CloudGames.Infrastructure.Auth;
 
-public class JwtService(JwtOptions options)
+public class JwtService(IOptions<JwtOptions> options)
 {
-	private readonly JwtOptions _options = options;
+	private readonly JwtOptions _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
 
 	public string GenerateToken(Guid id, string name, string email, string role)
 	{

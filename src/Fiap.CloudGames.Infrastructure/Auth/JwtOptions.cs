@@ -10,18 +10,18 @@ public class JwtOptions
 	public void Validate()
 	{
 		if (string.IsNullOrWhiteSpace(Issuer))
-			throw new ArgumentException("Issuer must be provided and non-empty.", nameof(Issuer));
+			throw new ArgumentException("Jwt: Issuer must be provided and non-empty.", nameof(Issuer));
 
 		if (string.IsNullOrWhiteSpace(Audience))
-			throw new ArgumentException("Audience must be provided and non-empty.", nameof(Audience));
+			throw new ArgumentException("Jwt: Audience must be provided and non-empty.", nameof(Audience));
 
 		if (string.IsNullOrWhiteSpace(Secret))
-			throw new ArgumentException("Secret must be provided and non-empty.", nameof(Secret));
+			throw new ArgumentException("Jwt: Secret must be provided and non-empty.", nameof(Secret));
 
 		if (Secret.Length < 32)
-			throw new ArgumentException("Secret is too short. Use at least 32 characters in production.", nameof(Secret));
+			throw new ArgumentException("Jwt: Secret is too short. Use at least 32 characters in production.", nameof(Secret));
 
 		if (ExpiryMinutes <= 0)
-			throw new ArgumentException("ExpiryMinutes must be a positive integer.", nameof(ExpiryMinutes));
+			throw new ArgumentException("Jwt: ExpiryMinutes must be a positive integer.", nameof(ExpiryMinutes));
 	}
 }
