@@ -17,12 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{02EA681E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fiap.CloudGames.Tests", "tests\Fiap.CloudGames.Tests\Fiap.CloudGames.Tests.csproj", "{2FF32398-B664-4938-8F72-DA82B9030E22}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "spikes-e-pocs", "spikes-e-pocs", "{FB2153A9-E740-4CDC-B32A-27C8B4C11333}"
-	ProjectSection(SolutionItems) = preProject
-		spikes-e-pocs\README.md = spikes-e-pocs\README.md
-		spikes-e-pocs\TEMPLATE-SPIKE.md = spikes-e-pocs\TEMPLATE-SPIKE.md
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
