@@ -8,6 +8,8 @@ public interface IUserService
 	Task<UserDto?> GetByIdAsync(Guid id);
 	Task<UserDto?> GetByEmailAsync(string email);
 
+	Task<UserDto?> AuthenticateAsync(string email, string password);
+
 	Task<UserDto> RegisterAsync(UserRegisterDto dto);
 	Task<string> GenerateEmailConfirmationAsync(string email);
 	Task<bool> ConfirmEmailAsync(string token);

@@ -1,9 +1,10 @@
 using Fiap.CloudGames.Application.Users.Dtos;
 using Fiap.CloudGames.Application.Users.Services;
 using Fiap.CloudGames.Domain.Users.Enums;
+using Fiap.CloudGames.Infrastructure.Auth;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace Fiap.CloudGames.Api.Controllers;
@@ -13,16 +14,32 @@ namespace Fiap.CloudGames.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class UsersController(IUserService userService, IEmailSender emailSender) : ControllerBase
+public class UsersController(IUserService userService, IEmailSender emailSender, JwtService jwtService) : ControllerBase
 {
 	private readonly IUserService _userService = userService;
 	private readonly IEmailSender _emailSender = emailSender;
+	private readonly JwtService _jwtService = jwtService;
+
+	/// <summary>
+	/// Autentica usuário e retorna um JWT.
+	/// </summary>
+	/// <param name="dto">DTO com email e senha.</param>
+	/// <returns>JWT token.</returns>
+	[HttpPost("login")]
+	[AllowAnonymous]
+	public async Task<IActionResult> Login([FromBody] LoginDto dto)
+	{
+		var user = await _userService.AuthenticateAsync(dto.Email, dto.Password);
+		if (user == null) return Unauthorized(new { message = "Credenciais inválidas." });
+		var jwt = _jwtService.GenerateToken(user.Id, user.Name, user.Email, user.Role.ToString());
+		return Ok(new { token = jwt });
+	}
 
 	/// <summary>
 	/// Lista todos os usuários (necessário role Administrator).
 	/// </summary>
 	[HttpGet]
-	//[Authorize(Roles = nameof(UserRole.Administrator))]
+	[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> GetAll()
 	{
 		var all = await _userService.GetAllAsync();
@@ -34,7 +51,7 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	/// </summary>
 	/// <param name="id">Identificador do usuário (GUID).</param>
 	[HttpGet("{id:guid}")]
-	//[Authorize(Roles = nameof(UserRole.Administrator))]
+	[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> GetById(Guid id)
 	{
 		var user = await _userService.GetByIdAsync(id);
@@ -43,15 +60,17 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	}
 
 	/// <summary>
-	/// Obtém um usuário pelo email (usuário autenticado).
+	/// Obtém os dados do usuário autenticado (a partir do token JWT).
 	/// </summary>
-	/// <param name="email">Email do usuário.</param>
-	[HttpGet("by-email")]
-	//[Authorize]
-	public async Task<IActionResult> GetByEmail([FromQuery] string email)
+	[HttpGet("me")]
+	[Authorize]
+	public async Task<IActionResult> GetMe()
 	{
+		var email = User.FindFirstValue(ClaimTypes.Email);
+		if (string.IsNullOrWhiteSpace(email)) return Unauthorized(new { message = "Email não presente no token." });
+
 		var user = await _userService.GetByEmailAsync(email);
-		if (user == null) return NotFound(new { message = "Usuário não encontrado." });
+		if (user == null) return Unauthorized(new { message = "Usuário não encontrado ou token inválido." });
 		return Ok(user);
 	}
 
@@ -61,6 +80,7 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	/// <param name="dto">Dados de registro (nome, email, senha).</param>
 	/// <returns>Usuário criado.</returns>
 	[HttpPost("register")]
+	[AllowAnonymous]
 	public async Task<IActionResult> Register([FromBody] UserRegisterDto dto)
 	{
 		var created = await _userService.RegisterAsync(dto);
@@ -74,6 +94,7 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	/// </summary>
 	/// <param name="dto">DTO contendo o token de confirmação.</param>
 	[HttpPost("confirm")]
+	[AllowAnonymous]
 	public async Task<IActionResult> Confirm([FromBody] ConfirmEmailDto dto)
 	{
 		var ok = await _userService.ConfirmEmailAsync(dto.Token);
@@ -86,6 +107,7 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	/// </summary>
 	/// <param name="dto">DTO com o email.</param>
 	[HttpPost("forgot-password")]
+	[AllowAnonymous]
 	public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
 	{
 		var token = await _userService.GeneratePasswordResetAsync(dto.Email);
@@ -97,6 +119,7 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	/// </summary>
 	/// <param name="dto">DTO com token e nova senha.</param>
 	[HttpPost("reset-password")]
+	[AllowAnonymous]
 	public async Task<IActionResult> Reset([FromBody] ResetPasswordDto dto)
 	{
 		var ok = await _userService.ResetPasswordAsync(dto.Token, dto.NewPassword);
@@ -109,7 +132,7 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	/// </summary>
 	/// <param name="dto">DTO contendo nome, email e role.</param>
 	[HttpPost]
-	//[Authorize(Roles = nameof(UserRole.Administrator))]
+	[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> CreateByAdmin([FromBody] AdminUserCreateDto dto)
 	{
 		var created = await _userService.CreateByAdminAsync(dto);
@@ -122,6 +145,7 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	/// Endpoint para primeiro acesso: define a senha usando o token recebido por email.
 	/// </summary>
 	[HttpPost("first-access")]
+	[AllowAnonymous]
 	public async Task<IActionResult> FirstAccess([FromBody] FirstAccessDto dto)
 	{
 		var ok = await _userService.FirstAccessAsync(dto.Token, dto.NewPassword);
@@ -134,7 +158,7 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	/// </summary>
 	/// <param name="dto">DTO contendo campos a serem atualizados.</param>
 	[HttpPut]
-	//[Authorize(Roles = nameof(UserRole.Administrator))]
+	[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> Update([FromBody] AdminUserUpdateDto dto)
 	{
 		var updated = await _userService.UpdateAsync(dto);
@@ -147,7 +171,7 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	/// </summary>
 	/// <param name="id">Identificador do usuário (GUID).</param>
 	[HttpDelete("{id:guid}")]
-	//[Authorize(Roles = nameof(UserRole.Administrator))]
+	[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> Delete(Guid id)
 	{
 		await _userService.DeleteAsync(id);
@@ -155,20 +179,12 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	}
 
 	/// <summary>
-	/// Restaura um usuário deletado (necessário role Administrator ou o próprio usuário).
+	/// Restaura um usuário deletado (necessário role Administrator).
 	/// </summary>
 	[HttpPost("{id:guid}/restore")]
-	//[Authorize]
+	[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> Restore(Guid id)
 	{
-		var callerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-		var callerRole = User.FindFirstValue(ClaimTypes.Role);
-
-		var isAdmin = string.Equals(callerRole, "Administrator", StringComparison.OrdinalIgnoreCase);
-		var isOwner = Guid.TryParse(callerId, out var parsedCallerId) && parsedCallerId == id;
-
-		if (!isAdmin && !isOwner) return Forbid();
-
 		await _userService.RestoreAsync(id);
 		return Ok(new { message = "Usuário restaurado." });
 	}

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Fiap.CloudGames.Application\Fiap.CloudGames.Application.csproj" />
     <ProjectReference Include="..\Fiap.CloudGames.Domain\Fiap.CloudGames.Domain.csproj" />
   </ItemGroup>

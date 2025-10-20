@@ -27,6 +27,16 @@ public class UserService(IUserRepository repository) : IUserService
 		return user == null ? null : Map(user);
 	}
 
+	public async Task<UserDto?> AuthenticateAsync(string email, string password)
+	{
+		var user = await _repository.GetByEmailAsync(email);
+		if (user == null) return null;
+		if (!user.VerifyPassword(password)) return null;
+		if (!user.EmailConfirmed) return null;
+		if (user.Status != UserStatus.Active) return null;
+		return Map(user);
+	}
+
 	public async Task<UserDto> RegisterAsync(UserRegisterDto dto)
 	{
 		var existing = await _repository.GetByEmailAsync(dto.Email);
