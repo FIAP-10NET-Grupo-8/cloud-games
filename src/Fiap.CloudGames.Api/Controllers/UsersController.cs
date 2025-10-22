@@ -81,12 +81,13 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 		return Ok(new { message = "Email confirmado com sucesso." });
 	}
 
-	/// <summary>
-	/// Solicita um token de redefinição de senha para o email informado.
-	/// </summary>
-	/// <param name="dto">DTO com o email.</param>
-	[HttpPost("forgot-password")]
-	public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+    /// <summary>
+    /// Solicita um token de redefinição de senha para o email informado.
+    /// </summary>
+    /// <param name="dto">DTO com o email.</param>
+    //  SECURITY: avaliar trocar para 202 + resposta genérica em produção
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
 	{
 		var token = await _userService.GeneratePasswordResetAsync(dto.Email);
 		return Ok(new { resetToken = token });
