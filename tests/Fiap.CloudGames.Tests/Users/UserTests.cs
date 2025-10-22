@@ -120,7 +120,7 @@ public class UserTests
     public void ResetPassword_ExpiredToken_ReturnsFalse()
     {
         var user = User.Create("User2", "u2@example.com", "Strong@Password123", UserRole.User, UserStatus.Active);
-        var token = user.GeneratePasswordResetToken(TimeSpan.FromSeconds(0));
+        var token = user.GeneratePasswordResetToken(TimeSpan.FromSeconds(-1));
         Assert.False(user.ResetPassword(token, "Another@123"));
     }
     #endregion

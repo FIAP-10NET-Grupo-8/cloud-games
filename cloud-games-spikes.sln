@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "spikes-e-pocs", "spikes-e-pocs", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		spikes-e-pocs\README.md = spikes-e-pocs\README.md
+		spikes-e-pocs\TEMPLATE-SPIKE.md = spikes-e-pocs\TEMPLATE-SPIKE.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "user", "user", "{7BE45235-E906-4762-B69F-54C5DE369B04}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GH-7-Investigacao-Hashing-de-Senhas", "GH-7-Investigacao-Hashing-de-Senhas", "{41D14790-55DB-4BA9-B381-BFCF87C22F3C}"
+	ProjectSection(SolutionItems) = preProject
+		spikes-e-pocs\user\GH-7-Investigacao-Hashing-de-Senhas\SPIKE.md = spikes-e-pocs\user\GH-7-Investigacao-Hashing-de-Senhas\SPIKE.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fiap.CloudGames.POCs.User.Hashing", "spikes-e-pocs\user\GH-7-Investigacao-Hashing-de-Senhas\Fiap.CloudGames.POCs.User.Hashing\Fiap.CloudGames.POCs.User.Hashing.csproj", "{BC6502BB-D215-D5F9-A832-CCA000CB1FA2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC6502BB-D215-D5F9-A832-CCA000CB1FA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC6502BB-D215-D5F9-A832-CCA000CB1FA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC6502BB-D215-D5F9-A832-CCA000CB1FA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC6502BB-D215-D5F9-A832-CCA000CB1FA2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7BE45235-E906-4762-B69F-54C5DE369B04} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{41D14790-55DB-4BA9-B381-BFCF87C22F3C} = {7BE45235-E906-4762-B69F-54C5DE369B04}
+		{BC6502BB-D215-D5F9-A832-CCA000CB1FA2} = {41D14790-55DB-4BA9-B381-BFCF87C22F3C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AAD25EEF-4B4C-4189-90E4-8E82E2850981}
+	EndGlobalSection
+EndGlobal

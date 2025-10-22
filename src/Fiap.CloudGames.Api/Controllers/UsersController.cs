@@ -10,7 +10,7 @@ using System.Security.Claims;
 namespace Fiap.CloudGames.Api.Controllers;
 
 /// <summary>
-/// Endpoints para gerenciamento de usu�rios.
+/// Endpoints para gerenciamento de usuários.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -21,7 +21,7 @@ public class UsersController(IUserService userService, IEmailSender emailSender,
 	private readonly JwtService _jwtService = jwtService;
 
 	/// <summary>
-	/// Autentica usu�rio e retorna um JWT.
+	/// Autentica usuário e retorna um JWT.
 	/// </summary>
 	/// <param name="dto">DTO com email e senha.</param>
 	/// <returns>JWT token.</returns>
@@ -30,13 +30,13 @@ public class UsersController(IUserService userService, IEmailSender emailSender,
 	public async Task<IActionResult> Login([FromBody] LoginDto dto)
 	{
 		var user = await _userService.AuthenticateAsync(dto.Email, dto.Password);
-		if (user == null) return Unauthorized(new { message = "Credenciais inv�lidas." });
+		if (user == null) return Unauthorized(new { message = "Credenciais inválidas." });
 		var jwt = _jwtService.GenerateToken(user.Id, user.Name, user.Email, user.Role.ToString());
 		return Ok(new { token = jwt });
 	}
 
 	/// <summary>
-	/// Lista todos os usu�rios (necess�rio role Administrator).
+	/// Lista todos os usuários (necessário role Administrator).
 	/// </summary>
 	[HttpGet]
 	[Authorize(Roles = nameof(UserRole.Administrator))]
@@ -47,68 +47,68 @@ public class UsersController(IUserService userService, IEmailSender emailSender,
 	}
 
 	/// <summary>
-	/// Obt�m um usu�rio pelo identificador (necess�rio role Administrator).
+	/// Obtém um usuário pelo identificador (necessário role Administrator).
 	/// </summary>
-	/// <param name="id">Identificador do usu�rio (GUID).</param>
+	/// <param name="id">Identificador do usuário (GUID).</param>
 	[HttpGet("{id:guid}")]
 	[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> GetById(Guid id)
 	{
 		var user = await _userService.GetByIdAsync(id);
-		if (user == null) return NotFound(new { message = "Usu�rio n�o encontrado." });
+		if (user == null) return NotFound(new { message = "Usuário não encontrado." });
 		return Ok(user);
 	}
 
 	/// <summary>
-	/// Obt�m os dados do usu�rio autenticado (a partir do token JWT).
+	/// Obtém os dados do usuário autenticado (a partir do token JWT).
 	/// </summary>
 	[HttpGet("me")]
 	[Authorize]
 	public async Task<IActionResult> GetMe()
 	{
 		var email = User.FindFirstValue(ClaimTypes.Email);
-		if (string.IsNullOrWhiteSpace(email)) return Unauthorized(new { message = "Email n�o presente no token." });
+		if (string.IsNullOrWhiteSpace(email)) return Unauthorized(new { message = "Email não presente no token." });
 
 		var user = await _userService.GetByEmailAsync(email);
-		if (user == null) return Unauthorized(new { message = "Usu�rio n�o encontrado ou token inv�lido." });
+		if (user == null) return Unauthorized(new { message = "Usuário não encontrado ou token inválido." });
 		return Ok(user);
 	}
 
 	/// <summary>
-	/// Registra um novo usu�rio (self-signup).
+	/// Registra um novo usuário (self-signup).
 	/// </summary>
 	/// <param name="dto">Dados de registro (nome, email, senha).</param>
-	/// <returns>Usu�rio criado.</returns>
+	/// <returns>Usuário criado.</returns>
 	[HttpPost("register")]
 	[AllowAnonymous]
 	public async Task<IActionResult> Register([FromBody] UserRegisterDto dto)
 	{
 		var created = await _userService.RegisterAsync(dto);
 		var token = await _userService.GenerateEmailConfirmationAsync(created.Email);
-		await _emailSender.SendEmailAsync(created.Email, "Confirma��o de email", $"Seu token de confirma��o: {token}");
+		await _emailSender.SendEmailAsync(created.Email, "Confirmação de email", $"Seu token de confirmação: {token}");
 		return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
 	}
 
 	/// <summary>
-	/// Confirma o email de um usu�rio com token.
+	/// Confirma o email de um usuário com token.
 	/// </summary>
-	/// <param name="dto">DTO contendo o token de confirma��o.</param>
+	/// <param name="dto">DTO contendo o token de confirmação.</param>
 	[HttpPost("confirm")]
 	[AllowAnonymous]
 	public async Task<IActionResult> Confirm([FromBody] ConfirmEmailDto dto)
 	{
 		var ok = await _userService.ConfirmEmailAsync(dto.Token);
-		if (!ok) return BadRequest(new { message = "Token inv�lido ou expirado." });
+		if (!ok) return BadRequest(new { message = "Token inválido ou expirado." });
 		return Ok(new { message = "Email confirmado com sucesso." });
 	}
 
-	/// <summary>
-	/// Solicita um token de redefini��o de senha para o email informado.
-	/// </summary>
-	/// <param name="dto">DTO com o email.</param>
-	[HttpPost("forgot-password")]
-	[AllowAnonymous]
-	public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+    /// <summary>
+    /// Solicita um token de redefinição de senha para o email informado.
+    /// </summary>
+    /// <param name="dto">DTO com o email.</param>
+    //  SECURITY: avaliar trocar para 202 + resposta genérica em produção
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
 	{
 		var token = await _userService.GeneratePasswordResetAsync(dto.Email);
 		return Ok(new { resetToken = token });
@@ -123,12 +123,12 @@ public class UsersController(IUserService userService, IEmailSender emailSender,
 	public async Task<IActionResult> Reset([FromBody] ResetPasswordDto dto)
 	{
 		var ok = await _userService.ResetPasswordAsync(dto.Token, dto.NewPassword);
-		if (!ok) return BadRequest(new { message = "Token de redefini��o inv�lido ou expirado." });
+		if (!ok) return BadRequest(new { message = "Token de redefinição inválido ou expirado." });
 		return Ok(new { message = "Senha redefinida com sucesso." });
 	}
 
 	/// <summary>
-	/// Cria um usu�rio com privil�gios administrativos (necess�rio role Administrator).
+	/// Cria um usuário com privilégios administrativos (necessário role Administrator).
 	/// </summary>
 	/// <param name="dto">DTO contendo nome, email e role.</param>
 	[HttpPost]
@@ -149,12 +149,12 @@ public class UsersController(IUserService userService, IEmailSender emailSender,
 	public async Task<IActionResult> FirstAccess([FromBody] FirstAccessDto dto)
 	{
 		var ok = await _userService.FirstAccessAsync(dto.Token, dto.NewPassword);
-		if (!ok) return BadRequest(new { message = "Token inv�lido ou expirado." });
+		if (!ok) return BadRequest(new { message = "Token inválido ou expirado." });
 		return Ok(new { message = "Senha definida com sucesso." });
 	}
 
 	/// <summary>
-	/// Atualiza um usu�rio (necess�rio role Administrator).
+	/// Atualiza um usuário (necessário role Administrator).
 	/// </summary>
 	/// <param name="dto">DTO contendo campos a serem atualizados.</param>
 	[HttpPut]
@@ -162,14 +162,14 @@ public class UsersController(IUserService userService, IEmailSender emailSender,
 	public async Task<IActionResult> Update([FromBody] AdminUserUpdateDto dto)
 	{
 		var updated = await _userService.UpdateAsync(dto);
-		if (updated == null) return NotFound(new { message = "Usu�rio n�o encontrado." });
+		if (updated == null) return NotFound(new { message = "Usuário não encontrado." });
 		return Ok(updated);
 	}
 
 	/// <summary>
-	/// Soft-delete (marca usu�rio como Deleted) (necess�rio role Administrator).
+	/// Soft-delete (marca usuário como Deleted) (necessário role Administrator).
 	/// </summary>
-	/// <param name="id">Identificador do usu�rio (GUID).</param>
+	/// <param name="id">Identificador do usuário (GUID).</param>
 	[HttpDelete("{id:guid}")]
 	[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> Delete(Guid id)
@@ -179,13 +179,13 @@ public class UsersController(IUserService userService, IEmailSender emailSender,
 	}
 
 	/// <summary>
-	/// Restaura um usu�rio deletado (necess�rio role Administrator).
+	/// Restaura um usuário deletado (necessário role Administrator).
 	/// </summary>
 	[HttpPost("{id:guid}/restore")]
 	[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> Restore(Guid id)
 	{
 		await _userService.RestoreAsync(id);
-		return Ok(new { message = "Usu�rio restaurado." });
+		return Ok(new { message = "Usuário restaurado." });
 	}
 }

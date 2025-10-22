@@ -1,0 +1,64 @@
+name: .NET CI
+
+on:
+  push:
+    branches: [ main, develop, 'feature/**', 'fix/**', 'chore/**' ]
+    paths-ignore:
+      - 'spikes-e-pocs/**'
+      - 'cloud-games-spikes.sln'
+      - '**/*.md'
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - 'spikes-e-pocs/**'
+      - 'cloud-games-spikes.sln'
+      - '**/*.md'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_NOLOGO: 1
+
+jobs:
+  build-and-test:
+    name: Build & Test (.NET 8)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8.x
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore ./cloud-games.sln
+
+      - name: Build (Release)
+        run: dotnet build ./cloud-games.sln --configuration Release --no-restore
+
+      - name: Test (with coverage)
+        run: >
+          dotnet test ./cloud-games.sln
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=test_results.trx"
+          --collect "XPlat Code Coverage"
+
+      - name: Upload test results & coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts
+          if-no-files-found: ignore
+          path: |
+            **/TestResults/**/*.trx
+            **/TestResults/**/coverage.cobertura.xml
