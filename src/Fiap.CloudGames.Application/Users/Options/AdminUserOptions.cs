@@ -11,8 +11,8 @@ public class AdminUserOptions
     public string Status { get; set; } = default!;
     public bool EmailConfirmed { get; set; }
 
-    public UserRole RoleAsEnum => Enum.TryParse<UserRole>(Role, out var r) ? r : throw new ArgumentException("AdminUser: Role is invalid.", nameof(Role));
-    public UserStatus StatusAsEnum => Enum.TryParse<UserStatus>(Status, out var s) ? s : throw new ArgumentException("AdminUser: Status is invalid.", nameof(Status));
+    public UserRole RoleAsEnum => Enum.TryParse<UserRole>(Role, ignoreCase: true, out var r) ? r : throw new ArgumentException("AdminUser: Role is invalid.", nameof(Role));
+    public UserStatus StatusAsEnum => Enum.TryParse<UserStatus>(Status, ignoreCase: true, out var s) ? s : throw new ArgumentException("AdminUser: Status is invalid.", nameof(Status));
 
     public void Validate()
     {

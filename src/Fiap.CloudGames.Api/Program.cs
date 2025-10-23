@@ -107,9 +107,10 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Resolve and run the registered seeder
-using (var scope = app.Services.CreateScope())
+// Seeder: rodar somente em Development
+if (app.Environment.IsDevelopment())
 {
+    using var scope = app.Services.CreateScope();
     var seeder = scope.ServiceProvider.GetService<IUserSeeder>();
     if (seeder != null) await seeder.SeedAsync();
 }
