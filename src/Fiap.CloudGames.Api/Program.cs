@@ -15,6 +15,13 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
 
+using Fiap.CloudGames.Application.Interfaces;
+using Fiap.CloudGames.Application.Services;
+using Fiap.CloudGames.Domain.Interfaces;
+using Fiap.CloudGames.Infrastructure.Persistence;
+using Fiap.CloudGames.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add configuration options with validation
@@ -104,6 +111,18 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+#region [Game]
+
+builder.Services.AddScoped<IGameService, GameService>();
+//builder.Services.AddScoped<IGameRepository, GameRepository>();
+
+builder.Services.AddSingleton<IGameRepository, InMemoryGameRepository>();
+
+#endregion
 
 var app = builder.Build();
 
