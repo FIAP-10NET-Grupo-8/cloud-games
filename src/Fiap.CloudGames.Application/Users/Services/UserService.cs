@@ -2,12 +2,15 @@
 using Fiap.CloudGames.Domain.Users.Entities;
 using Fiap.CloudGames.Domain.Users.Enums;
 using Fiap.CloudGames.Domain.Users.Repositories;
+using Microsoft.Extensions.Options;
+using Fiap.CloudGames.Application.Users.Options;
 
 namespace Fiap.CloudGames.Application.Users.Services;
 
-public class UserService(IUserRepository repository) : IUserService
+public class UserService(IUserRepository repository, IOptions<AdminUserOptions> adminOptions) : IUserService
 {
 	private readonly IUserRepository _repository = repository;
+	private readonly string? _superEmail = adminOptions?.Value?.Email?.ToLowerInvariant();
 
 	public async Task<IReadOnlyList<UserDto>> GetAllAsync()
 	{
@@ -25,6 +28,16 @@ public class UserService(IUserRepository repository) : IUserService
 	{
 		var user = await _repository.GetByEmailAsync(email);
 		return user == null ? null : Map(user);
+	}
+
+	public async Task<UserDto?> AuthenticateAsync(string email, string password)
+	{
+		var user = await _repository.GetByEmailAsync(email);
+		if (user == null) return null;
+		if (!user.VerifyPassword(password)) return null;
+		if (!user.EmailConfirmed) return null;
+		if (user.Status != UserStatus.Active) return null;
+		return Map(user);
 	}
 
 	public async Task<UserDto> RegisterAsync(UserRegisterDto dto)
@@ -105,6 +118,10 @@ public class UserService(IUserRepository repository) : IUserService
 		var user = await _repository.GetByIdAsync(dto.Id);
 		if (user == null) return null;
 
+		// Prevent modifying the seeded super admin
+		if (!string.IsNullOrWhiteSpace(_superEmail) && string.Equals(user.Email.Address, _superEmail, StringComparison.OrdinalIgnoreCase))
+			throw new InvalidOperationException("O usuário administrativo principal não pode ser modificado.");
+
 		if (!string.IsNullOrWhiteSpace(dto.Name)) user.UpdateName(dto.Name);
 
 		if (!string.IsNullOrWhiteSpace(dto.Email))
@@ -132,6 +149,11 @@ public class UserService(IUserRepository repository) : IUserService
 	{
 		var user = await _repository.GetByIdAsync(id);
 		if (user == null) return;
+
+		// Prevent deleting the seeded super admin
+		if (!string.IsNullOrWhiteSpace(_superEmail) && string.Equals(user.Email.Address, _superEmail, StringComparison.OrdinalIgnoreCase))
+			throw new InvalidOperationException("O usuário administrativo principal não pode ser removido.");
+
 		user.SoftDelete();
 		await _repository.UpdateAsync(user);
 	}

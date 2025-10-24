@@ -1,28 +1,45 @@
 using Fiap.CloudGames.Application.Users.Dtos;
 using Fiap.CloudGames.Application.Users.Services;
 using Fiap.CloudGames.Domain.Users.Enums;
+using Fiap.CloudGames.Infrastructure.Auth;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace Fiap.CloudGames.Api.Controllers;
 
 /// <summary>
-/// Endpoints para gerenciamento de usuários.
+/// Endpoints para gerenciamento de usuÃ¡rios.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class UsersController(IUserService userService, IEmailSender emailSender) : ControllerBase
+public class UsersController(IUserService userService, IEmailSender emailSender, JwtService jwtService) : ControllerBase
 {
 	private readonly IUserService _userService = userService;
 	private readonly IEmailSender _emailSender = emailSender;
+	private readonly JwtService _jwtService = jwtService;
 
 	/// <summary>
-	/// Lista todos os usuários (necessário role Administrator).
+	/// Autentica usuÃ¡rio e retorna um JWT.
+	/// </summary>
+	/// <param name="dto">DTO com email e senha.</param>
+	/// <returns>JWT token.</returns>
+	[HttpPost("login")]
+	[AllowAnonymous]
+	public async Task<IActionResult> Login([FromBody] LoginDto dto)
+	{
+		var user = await _userService.AuthenticateAsync(dto.Email, dto.Password);
+		if (user == null) return Unauthorized(new { message = "Credenciais invÃ¡lidas." });
+		var jwt = _jwtService.GenerateToken(user.Id, user.Name, user.Email, user.Role.ToString());
+		return Ok(new { token = jwt });
+	}
+
+	/// <summary>
+	/// Lista todos os usuÃ¡rios (necessÃ¡rio role Administrator).
 	/// </summary>
 	[HttpGet]
-	//[Authorize(Roles = nameof(UserRole.Administrator))]
+	[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> GetAll()
 	{
 		var all = await _userService.GetAllAsync();
@@ -30,62 +47,66 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	}
 
 	/// <summary>
-	/// Obtém um usuário pelo identificador (necessário role Administrator).
+	/// ObtÃ©m um usuÃ¡rio pelo identificador (necessÃ¡rio role Administrator).
 	/// </summary>
-	/// <param name="id">Identificador do usuário (GUID).</param>
+	/// <param name="id">Identificador do usuÃ¡rio (GUID).</param>
 	[HttpGet("{id:guid}")]
-	//[Authorize(Roles = nameof(UserRole.Administrator))]
+	[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> GetById(Guid id)
 	{
 		var user = await _userService.GetByIdAsync(id);
-		if (user == null) return NotFound(new { message = "Usuário não encontrado." });
+		if (user == null) return NotFound(new { message = "UsuÃ¡rio nÃ£o encontrado." });
 		return Ok(user);
 	}
 
 	/// <summary>
-	/// Obtém um usuário pelo email (usuário autenticado).
+	/// ObtÃ©m os dados do usuÃ¡rio autenticado (a partir do token JWT).
 	/// </summary>
-	/// <param name="email">Email do usuário.</param>
-	[HttpGet("by-email")]
-	//[Authorize]
-	public async Task<IActionResult> GetByEmail([FromQuery] string email)
+	[HttpGet("me")]
+	[Authorize]
+	public async Task<IActionResult> GetMe()
 	{
+		var email = User.FindFirstValue(ClaimTypes.Email);
+		if (string.IsNullOrWhiteSpace(email)) return Unauthorized(new { message = "Email nÃ£o presente no token." });
+
 		var user = await _userService.GetByEmailAsync(email);
-		if (user == null) return NotFound(new { message = "Usuário não encontrado." });
+		if (user == null) return Unauthorized(new { message = "UsuÃ¡rio nÃ£o encontrado ou token invÃ¡lido." });
 		return Ok(user);
 	}
 
 	/// <summary>
-	/// Registra um novo usuário (self-signup).
+	/// Registra um novo usuÃ¡rio (self-signup).
 	/// </summary>
 	/// <param name="dto">Dados de registro (nome, email, senha).</param>
-	/// <returns>Usuário criado.</returns>
+	/// <returns>UsuÃ¡rio criado.</returns>
 	[HttpPost("register")]
+	[AllowAnonymous]
 	public async Task<IActionResult> Register([FromBody] UserRegisterDto dto)
 	{
 		var created = await _userService.RegisterAsync(dto);
 		var token = await _userService.GenerateEmailConfirmationAsync(created.Email);
-		await _emailSender.SendEmailAsync(created.Email, "Confirmação de email", $"Seu token de confirmação: {token}");
+		await _emailSender.SendEmailAsync(created.Email, "ConfirmaÃ§Ã£o de email", $"Seu token de confirmaÃ§Ã£o: {token}");
 		return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
 	}
 
 	/// <summary>
-	/// Confirma o email de um usuário com token.
+	/// Confirma o email de um usuÃ¡rio com token.
 	/// </summary>
-	/// <param name="dto">DTO contendo o token de confirmação.</param>
+	/// <param name="dto">DTO contendo o token de confirmaÃ§Ã£o.</param>
 	[HttpPost("confirm")]
+	[AllowAnonymous]
 	public async Task<IActionResult> Confirm([FromBody] ConfirmEmailDto dto)
 	{
 		var ok = await _userService.ConfirmEmailAsync(dto.Token);
-		if (!ok) return BadRequest(new { message = "Token inválido ou expirado." });
+		if (!ok) return BadRequest(new { message = "Token invÃ¡lido ou expirado." });
 		return Ok(new { message = "Email confirmado com sucesso." });
 	}
 
     /// <summary>
-    /// Solicita um token de redefinição de senha para o email informado.
+    /// Solicita um token de redefiniÃ§Ã£o de senha para o email informado.
     /// </summary>
     /// <param name="dto">DTO com o email.</param>
-    //  SECURITY: avaliar trocar para 202 + resposta genérica em produção
+    //  SECURITY: avaliar trocar para 202 + resposta genÃ©rica em produÃ§Ã£o
     [HttpPost("forgot-password")]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
 	{
@@ -98,19 +119,20 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	/// </summary>
 	/// <param name="dto">DTO com token e nova senha.</param>
 	[HttpPost("reset-password")]
+	[AllowAnonymous]
 	public async Task<IActionResult> Reset([FromBody] ResetPasswordDto dto)
 	{
 		var ok = await _userService.ResetPasswordAsync(dto.Token, dto.NewPassword);
-		if (!ok) return BadRequest(new { message = "Token de redefinição inválido ou expirado." });
+		if (!ok) return BadRequest(new { message = "Token de redefiniÃ§Ã£o invÃ¡lido ou expirado." });
 		return Ok(new { message = "Senha redefinida com sucesso." });
 	}
 
 	/// <summary>
-	/// Cria um usuário com privilégios administrativos (necessário role Administrator).
+	/// Cria um usuÃ¡rio com privilÃ©gios administrativos (necessÃ¡rio role Administrator).
 	/// </summary>
 	/// <param name="dto">DTO contendo nome, email e role.</param>
 	[HttpPost]
-	//[Authorize(Roles = nameof(UserRole.Administrator))]
+	[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> CreateByAdmin([FromBody] AdminUserCreateDto dto)
 	{
 		var created = await _userService.CreateByAdminAsync(dto);
@@ -123,32 +145,33 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	/// Endpoint para primeiro acesso: define a senha usando o token recebido por email.
 	/// </summary>
 	[HttpPost("first-access")]
+	[AllowAnonymous]
 	public async Task<IActionResult> FirstAccess([FromBody] FirstAccessDto dto)
 	{
 		var ok = await _userService.FirstAccessAsync(dto.Token, dto.NewPassword);
-		if (!ok) return BadRequest(new { message = "Token inválido ou expirado." });
+		if (!ok) return BadRequest(new { message = "Token invÃ¡lido ou expirado." });
 		return Ok(new { message = "Senha definida com sucesso." });
 	}
 
 	/// <summary>
-	/// Atualiza um usuário (necessário role Administrator).
+	/// Atualiza um usuÃ¡rio (necessÃ¡rio role Administrator).
 	/// </summary>
 	/// <param name="dto">DTO contendo campos a serem atualizados.</param>
 	[HttpPut]
-	//[Authorize(Roles = nameof(UserRole.Administrator))]
+	[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> Update([FromBody] AdminUserUpdateDto dto)
 	{
 		var updated = await _userService.UpdateAsync(dto);
-		if (updated == null) return NotFound(new { message = "Usuário não encontrado." });
+		if (updated == null) return NotFound(new { message = "UsuÃ¡rio nÃ£o encontrado." });
 		return Ok(updated);
 	}
 
 	/// <summary>
-	/// Soft-delete (marca usuário como Deleted) (necessário role Administrator).
+	/// Soft-delete (marca usuÃ¡rio como Deleted) (necessÃ¡rio role Administrator).
 	/// </summary>
-	/// <param name="id">Identificador do usuário (GUID).</param>
+	/// <param name="id">Identificador do usuÃ¡rio (GUID).</param>
 	[HttpDelete("{id:guid}")]
-	//[Authorize(Roles = nameof(UserRole.Administrator))]
+	[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> Delete(Guid id)
 	{
 		await _userService.DeleteAsync(id);
@@ -156,21 +179,13 @@ public class UsersController(IUserService userService, IEmailSender emailSender)
 	}
 
 	/// <summary>
-	/// Restaura um usuário deletado (necessário role Administrator ou o próprio usuário).
+	/// Restaura um usuÃ¡rio deletado (necessÃ¡rio role Administrator).
 	/// </summary>
 	[HttpPost("{id:guid}/restore")]
-	//[Authorize]
+	[Authorize(Roles = nameof(UserRole.Administrator))]
 	public async Task<IActionResult> Restore(Guid id)
 	{
-		var callerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-		var callerRole = User.FindFirstValue(ClaimTypes.Role);
-
-		var isAdmin = string.Equals(callerRole, "Administrator", StringComparison.OrdinalIgnoreCase);
-		var isOwner = Guid.TryParse(callerId, out var parsedCallerId) && parsedCallerId == id;
-
-		if (!isAdmin && !isOwner) return Forbid();
-
 		await _userService.RestoreAsync(id);
-		return Ok(new { message = "Usuário restaurado." });
+		return Ok(new { message = "UsuÃ¡rio restaurado." });
 	}
 }
