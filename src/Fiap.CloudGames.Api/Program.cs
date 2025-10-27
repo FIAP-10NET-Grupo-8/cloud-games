@@ -1,26 +1,25 @@
-using Fiap.CloudGames.Api;
-using Fiap.CloudGames.Application.Users.Services;
+using Fiap.CloudGames.Api.Middleware;
+using Fiap.CloudGames.Application.Interfaces;
+using Fiap.CloudGames.Application.Services;
 using Fiap.CloudGames.Application.Users.Options;
+using Fiap.CloudGames.Application.Users.Services;
+using Fiap.CloudGames.Domain.Interfaces;
 using Fiap.CloudGames.Domain.Users.Repositories;
 using Fiap.CloudGames.Infrastructure.Auth;
 using Fiap.CloudGames.Infrastructure.Email;
+using Fiap.CloudGames.Infrastructure.Persistence;
+using Fiap.CloudGames.Infrastructure.Repositories;
 using Fiap.CloudGames.Infrastructure.Users.Repositories;
 using Fiap.CloudGames.Infrastructure.Users.Seeders;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
-
-using Fiap.CloudGames.Application.Interfaces;
-using Fiap.CloudGames.Application.Services;
-using Fiap.CloudGames.Domain.Interfaces;
-using Fiap.CloudGames.Infrastructure.Persistence;
-using Fiap.CloudGames.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -140,6 +139,8 @@ if (app.Environment.IsDevelopment())
 }
 
 // Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
