@@ -63,10 +63,10 @@ var adminOptionsBuilder = builder.Services.AddOptions<AdminUserOptions>()
 // Add services to the container.
 builder.Services.AddSingleton<JwtService>();
 
-builder.Services.AddScoped<IUserRepository, InMemoryUserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-builder.Services.AddScoped<IUserSeeder, InMemoryUserSeeder>();
+builder.Services.AddScoped<IUserSeeder, UserSeeder>();
 
 builder.Services.AddSingleton<IEmailSender, ConsoleEmailSender>();
 
@@ -136,7 +136,12 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-	options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+	options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"), sqliteOptions =>
+	{
+		sqliteOptions.MigrationsAssembly(typeof(AppDbContext).Assembly.GetName().Name);
+	});
+});
 
 #region [Game]
 
