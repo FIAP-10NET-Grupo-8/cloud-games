@@ -9,12 +9,12 @@ namespace Fiap.CloudGames.Domain.Users.Entities;
 public class User
 {
 	public Guid Id { get; private set; }
-	public string Name { get; private set; }
-	public Email Email { get; private set; }
-	public Password Password { get; private set; }
-	public DateTime CreatedAt { get; private set; }
-	public UserRole Role { get; private set; }
-	public UserStatus Status { get; private set; }
+	public string Name { get; private set; } = string.Empty;
+	public Email Email { get; private set; } = default!;
+	public Password Password { get; private set; } = default!;
+	public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+	public UserRole Role { get; private set; } = UserRole.User;
+	public UserStatus Status { get; private set; } = UserStatus.Inactive;
 	public bool EmailConfirmed { get; private set; }
 	public string? ConfirmationToken { get; private set; }
 	public string? PasswordResetToken { get; private set; }
@@ -23,6 +23,8 @@ public class User
 	public DateTime? FirstAccessExpiresAt { get; private set; }
 
 	public bool IsActive => Status == UserStatus.Active;
+
+	private User() { }
 
 	private User(Guid id, string name, Email email, Password password, DateTime createdAt, UserRole role = UserRole.User, UserStatus status = UserStatus.Inactive, bool emailConfirmed = false, string? confirmationToken = null, string? passwordResetToken = null, DateTime? passwordResetExpiresAt = null, string? firstAccessToken = null, DateTime? firstAccessExpiresAt = null)
 	{

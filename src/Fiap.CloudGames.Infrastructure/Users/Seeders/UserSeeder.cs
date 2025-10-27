@@ -6,7 +6,7 @@ using Fiap.CloudGames.Application.Users.Options;
 
 namespace Fiap.CloudGames.Infrastructure.Users.Seeders;
 
-public class InMemoryUserSeeder(IUserRepository userRepository, IOptions<AdminUserOptions> options) : IUserSeeder
+public class UserSeeder(IUserRepository userRepository, IOptions<AdminUserOptions> options) : IUserSeeder
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly AdminUserOptions _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
