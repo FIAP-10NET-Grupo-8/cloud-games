@@ -18,23 +18,47 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Formatting.Json;
 using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add logging with Serilog
+try
+{
+	var logsPath = Path.Combine(AppContext.BaseDirectory, "Logs");
+	if (!Directory.Exists(logsPath)) Directory.CreateDirectory(logsPath);
+}
+catch { }
+
+Log.Logger = new LoggerConfiguration()
+	.Enrich.FromLogContext()
+	.Enrich.WithProperty("Service", "Fiap.CloudGames.Api")
+	.WriteTo.Console(new JsonFormatter())
+	.CreateBootstrapLogger();
+
+builder.Host.UseSerilog((ctx, services, configuration) =>
+{
+	configuration
+		.ReadFrom.Configuration(ctx.Configuration)
+		.Enrich.FromLogContext()
+		.Enrich.WithProperty("Service", "Fiap.CloudGames.Api");
+});
+
 // Add configuration options with validation
 var jwtSection = builder.Configuration.GetSection("Jwt");
 var jwtOptionsBuilder = builder.Services.AddOptions<JwtOptions>()
-    .Bind(jwtSection)
-    .Validate(options => { try { options.Validate(); return true; } catch { return false; } }, "JwtOptions validation")
-    .ValidateOnStart();
+	.Bind(jwtSection)
+	.Validate(options => { try { options.Validate(); return true; } catch { return false; } }, "JwtOptions validation")
+	.ValidateOnStart();
 
 var adminSection = builder.Configuration.GetSection("AdminUser");
 var adminOptionsBuilder = builder.Services.AddOptions<AdminUserOptions>()
-    .Bind(adminSection)
-    .Validate(options => { try { options.Validate(); return true; } catch { return false; } }, "AdminUserOptions validation")
-    .ValidateOnStart();
+	.Bind(adminSection)
+	.Validate(options => { try { options.Validate(); return true; } catch { return false; } }, "AdminUserOptions validation")
+	.ValidateOnStart();
 
 // Add services to the container.
 builder.Services.AddSingleton<JwtService>();
@@ -54,61 +78,61 @@ builder.Services.AddValidatorsFromAssemblyContaining<Fiap.CloudGames.Application
 
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
 .AddJwtBearer(options =>
 {
-    var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"] ?? string.Empty);
+	var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"] ?? string.Empty);
 
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidateAudience = true,
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        ValidateLifetime = true
-    };
+	options.RequireHttpsMetadata = false;
+	options.SaveToken = true;
+	options.TokenValidationParameters = new TokenValidationParameters
+	{
+		ValidateIssuerSigningKey = true,
+		IssuerSigningKey = new SymmetricSecurityKey(key),
+		ValidateIssuer = true,
+		ValidIssuer = builder.Configuration["Jwt:Issuer"],
+		ValidateAudience = true,
+		ValidAudience = builder.Configuration["Jwt:Audience"],
+		ValidateLifetime = true
+	};
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    var xmlFile = Path.ChangeExtension(Assembly.GetEntryAssembly()?.Location, ".xml");
-    if (File.Exists(xmlFile)) c.IncludeXmlComments(xmlFile);
+	var xmlFile = Path.ChangeExtension(Assembly.GetEntryAssembly()?.Location, ".xml");
+	if (File.Exists(xmlFile)) c.IncludeXmlComments(xmlFile);
 
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fiap.CloudGames API", Version = "v1" });
+	c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fiap.CloudGames API", Version = "v1" });
 
-    // JWT bearer auth in swagger
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Insira o token JWT no formato: Bearer {token}"
-    });
+	// JWT bearer auth in swagger
+	c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+	{
+		Name = "Authorization",
+		Type = SecuritySchemeType.Http,
+		Scheme = "bearer",
+		BearerFormat = "JWT",
+		In = ParameterLocation.Header,
+		Description = "Insira o token JWT no formato: Bearer {token}"
+	});
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
+	c.AddSecurityRequirement(new OpenApiSecurityRequirement
+	{
+		{
+			new OpenApiSecurityScheme
+			{
+				Reference = new OpenApiReference
+				{
+					Type = ReferenceType.SecurityScheme,
+					Id = "Bearer"
+				}
+			},
+			Array.Empty<string>()
+		}
+	});
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -133,18 +157,20 @@ var app = builder.Build();
 // Seeder: rodar somente em Development
 if (app.Environment.IsDevelopment())
 {
-    using var scope = app.Services.CreateScope();
-    var seeder = scope.ServiceProvider.GetService<IUserSeeder>();
-    if (seeder != null) await seeder.SeedAsync();
+	using var scope = app.Services.CreateScope();
+	var seeder = scope.ServiceProvider.GetService<IUserSeeder>();
+	if (seeder != null) await seeder.SeedAsync();
 }
 
 // Configure the HTTP request pipeline.
+app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseMiddleware<StructuredLoggingMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+	app.UseSwagger();
+	app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

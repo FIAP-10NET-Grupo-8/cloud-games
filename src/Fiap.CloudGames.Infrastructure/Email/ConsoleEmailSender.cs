@@ -1,17 +1,15 @@
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.Logging;
 
 namespace Fiap.CloudGames.Infrastructure.Email;
 
-public class ConsoleEmailSender : IEmailSender
+public class ConsoleEmailSender(ILogger<ConsoleEmailSender> logger) : IEmailSender
 {
-    public Task SendEmailAsync(string email, string subject, string htmlMessage)
+	private readonly ILogger<ConsoleEmailSender> logger = logger;
+
+	public Task SendEmailAsync(string email, string subject, string htmlMessage)
     {
-        Console.WriteLine("=== Sending Email ===");
-        Console.WriteLine($"To: {email}");
-        Console.WriteLine($"Subject: {subject}");
-        Console.WriteLine("Message:");
-        Console.WriteLine(htmlMessage);
-        Console.WriteLine("=====================");
-        return Task.CompletedTask;
+        logger.LogInformation("=== Sending Email ===\nTo: {email}\nSubject: {subject}\nMessage:\n{htmlMessage}\n=====================", email, subject, htmlMessage);
+		return Task.CompletedTask;
     }
 }
