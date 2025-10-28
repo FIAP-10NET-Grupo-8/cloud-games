@@ -3,7 +3,7 @@ using Fiap.CloudGames.Domain.Games.Repositories;
 using Fiap.CloudGames.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Fiap.CloudGames.Infrastructure.Repositories;
+namespace Fiap.CloudGames.Infrastructure.Games.Repositories;
 
 public sealed class GameRepository : IGameRepository
 {
