@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Fiap.CloudGames.Infrastructure.Persistence.Migrations
+namespace Fiap.CloudGames.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -15,16 +15,18 @@ namespace Fiap.CloudGames.Infrastructure.Persistence.Migrations
                 name: "Games",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Price = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
                     ReleaseDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Developer = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     Publisher = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     Genre = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
-                    Platforms = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true)
+                    Platforms = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
+                    Active = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -53,6 +55,12 @@ namespace Fiap.CloudGames.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Games_Title",
+                table: "Games",
+                column: "Title",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",

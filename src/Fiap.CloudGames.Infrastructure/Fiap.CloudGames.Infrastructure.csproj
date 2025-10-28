@@ -25,4 +25,8 @@
     <ProjectReference Include="..\Fiap.CloudGames.Domain\Fiap.CloudGames.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Games\" />
+  </ItemGroup>
+
 </Project>
