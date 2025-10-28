@@ -1,4 +1,5 @@
-﻿using Fiap.CloudGames.Domain.Games.Entities;
+﻿using Fiap.CloudGames.Domain.Orders.Entities;
+using Fiap.CloudGames.Domain.Games.Entities;
 using Fiap.CloudGames.Domain.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,8 +12,7 @@ public class AppDbContext : DbContext
     // getter-only DbSets: safer (no reassignment) and avoids nullability warnings
     public DbSet<User> Users => Set<User>();
     public DbSet<Game> Games => Set<Game>();
-
-    public DbSet<Order> Orders { get; set; }
+    public DbSet<Order> Orders => Set<Order>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

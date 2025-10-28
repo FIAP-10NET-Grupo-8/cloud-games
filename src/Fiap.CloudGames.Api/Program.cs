@@ -1,12 +1,15 @@
 using Fiap.CloudGames.Api.Middleware;
 using Fiap.CloudGames.Application.Games.Services;
+using Fiap.CloudGames.Application.Orders.Services;
 using Fiap.CloudGames.Application.Users.Options;
 using Fiap.CloudGames.Application.Users.Services;
 using Fiap.CloudGames.Domain.Games.Repositories;
+using Fiap.CloudGames.Domain.Orders.Interfaces;
 using Fiap.CloudGames.Domain.Users.Repositories;
 using Fiap.CloudGames.Infrastructure.Auth;
 using Fiap.CloudGames.Infrastructure.Email;
 using Fiap.CloudGames.Infrastructure.Games.Repositories;
+using Fiap.CloudGames.Infrastructure.Orders.Repositories;
 using Fiap.CloudGames.Infrastructure.Persistence;
 using Fiap.CloudGames.Infrastructure.Users.Repositories;
 using Fiap.CloudGames.Infrastructure.Users.Seeders;
@@ -67,6 +70,9 @@ builder.Services.AddScoped<IUserSeeder, UserSeeder>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IGameService, GameService>();
 
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
 builder.Services.AddSingleton<IEmailSender, ConsoleEmailSender>();
 
 builder.Services.AddControllers();
@@ -74,7 +80,6 @@ builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssemblyContaining<Fiap.CloudGames.Application.Users.Validators.UserRegisterDtoValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<Fiap.CloudGames.Application.Games.Validators.CreateGameDtoValidator>();
 
 builder.Services
     .AddAuthentication(o =>
