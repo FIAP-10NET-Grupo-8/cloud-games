@@ -1,0 +1,35 @@
+﻿using Fiap.CloudGames.Domain.Orders.Entities;
+using Fiap.CloudGames.Domain.Orders.Enums;
+
+namespace Fiap.CloudGames.Domain.Orders.Interfaces;
+
+/// <summary>
+/// Contrato para o repositório de dados da entidade Order.
+/// </summary>
+public interface IOrderRepository
+{
+	/// <summary>
+	/// Busca um jogo pelo seu Id.
+	/// </summary>
+	Task<Order?> GetByIdAsync(Guid id);
+
+	/// <summary>
+	/// Busca todos os pedidos salvos.
+	/// </summary>
+	Task<IEnumerable<Order>> GetAllAsync(DateTime? startDate, DateTime? endDate, OrderStatus? status);
+
+	/// <summary>
+	/// Adiciona novo pedido.
+	/// </summary>
+	Task AddAsync(Order order);
+
+	/// <summary>
+	/// Atualiza um pedido existente.
+	/// </summary>
+	Task UpdateAsync(Order order);
+
+	/// <summary>
+	/// Remove um Pedido.
+	/// </summary>
+	Task DeleteAsync(Order order);
+}
