@@ -52,12 +52,20 @@ builder.Host.UseSerilog((ctx, services, configuration) =>
 
 builder.Services.AddOptions<JwtOptions>()
     .Bind(builder.Configuration.GetSection("Jwt"))
-    .Validate(o => { try { o.Validate(); return true; } catch { return false; } }, "JwtOptions validation")
+    .Validate(o => 
+    { 
+        o.Validate();
+        return true;
+    }, "JwtOptions validation")
     .ValidateOnStart();
 
 builder.Services.AddOptions<AdminUserOptions>()
     .Bind(builder.Configuration.GetSection("AdminUser"))
-    .Validate(o => { try { o.Validate(); return true; } catch { return false; } }, "AdminUserOptions validation")
+    .Validate(o =>
+    {
+        o.Validate();
+        return true;
+    }, "AdminUserOptions validation")
     .ValidateOnStart();
 
 // Add services to the container.
