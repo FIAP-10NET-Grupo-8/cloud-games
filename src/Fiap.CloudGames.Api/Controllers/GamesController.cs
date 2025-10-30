@@ -1,5 +1,6 @@
 ﻿using Fiap.CloudGames.Application.Games.Dtos;
 using Fiap.CloudGames.Application.Games.Services;
+using Fiap.CloudGames.Domain.Users.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -55,7 +56,7 @@ public sealed class GamesController(IGameService gameService) : ControllerBase
     /// <param name="ct">Token de cancelamento da requisição.</param>
     /// <returns>Jogo criado.</returns>
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = nameof(UserRole.Administrator))]
     [ProducesResponseType(typeof(GameDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<GameDto>> Create([FromBody] CreateGameDto dto, CancellationToken ct)
@@ -72,8 +73,8 @@ public sealed class GamesController(IGameService gameService) : ControllerBase
     /// <param name="ct">Token de cancelamento da requisição.</param>
     /// <returns>Sem conteúdo em caso de sucesso.</returns>
     [HttpPut("{id:guid}")]
-    [Authorize]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+	[Authorize(Roles = nameof(UserRole.Administrator))]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateGameDto dto, CancellationToken ct)
     {
@@ -89,8 +90,8 @@ public sealed class GamesController(IGameService gameService) : ControllerBase
     /// <param name="ct">Token de cancelamento da requisição.</param>
     /// <returns>Sem conteúdo em caso de sucesso.</returns>
     [HttpDelete("{id:guid}")]
-    [Authorize]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+	[Authorize(Roles = nameof(UserRole.Administrator))]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
