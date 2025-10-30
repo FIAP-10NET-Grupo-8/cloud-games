@@ -3,16 +3,19 @@ using System;
 using Fiap.CloudGames.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Fiap.CloudGames.Infrastructure.Migrations
+namespace Fiap.CloudGames.Infrastructure.Persisstence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251028172543_AddOrder")]
+    partial class AddOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
@@ -85,33 +88,31 @@ namespace Fiap.CloudGames.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CustomerEmail")
-                        .IsRequired()
+                    b.Property<bool>("PaymentConfirmed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PaymentTransactionId")
                         .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("IdempotencyKey")
-                        .HasMaxLength(100)
+                    b.Property<Guid>("PlayerId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PaymentTransactionId")
-                        .HasMaxLength(100)
+                    b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("RefundDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("RefundReason")
-                        .HasMaxLength(500)
+                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("RefundRequestDate")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("RefundRequested")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(false);
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -125,55 +126,9 @@ namespace Fiap.CloudGames.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatedAt");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserId", "IdempotencyKey");
 
                     b.ToTable("Orders", (string)null);
-                });
-
-            modelBuilder.Entity("Fiap.CloudGames.Domain.Orders.Entities.OrderItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("LineTotal")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("OrderId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("Fiap.CloudGames.Domain.Users.Entities.User", b =>
@@ -226,14 +181,6 @@ namespace Fiap.CloudGames.Infrastructure.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("Fiap.CloudGames.Domain.Orders.Entities.OrderItem", b =>
-                {
-                    b.HasOne("Fiap.CloudGames.Domain.Orders.Entities.Order", null)
-                        .WithMany("Items")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("Fiap.CloudGames.Domain.Users.Entities.User", b =>
                 {
                     b.OwnsOne("Fiap.CloudGames.Domain.Users.ValueObjects.Email", "Email", b1 =>
@@ -282,11 +229,6 @@ namespace Fiap.CloudGames.Infrastructure.Migrations
 
                     b.Navigation("Password")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Fiap.CloudGames.Domain.Orders.Entities.Order", b =>
-                {
-                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

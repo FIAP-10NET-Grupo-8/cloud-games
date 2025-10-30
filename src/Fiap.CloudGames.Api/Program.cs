@@ -21,14 +21,18 @@ using Serilog;
 using Serilog.Formatting.Json;
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
+using Fiap.CloudGames.Application.Orders.Services;
+using Fiap.CloudGames.Domain.Orders.Repositories;
+using Fiap.CloudGames.Infrastructure.Orders.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add logging with Serilog
 try
 {
-	var logsPath = Path.Combine(AppContext.BaseDirectory, "Logs");
-	if (!Directory.Exists(logsPath)) Directory.CreateDirectory(logsPath);
+    var logsPath = Path.Combine(AppContext.BaseDirectory, "Logs");
+    if (!Directory.Exists(logsPath)) Directory.CreateDirectory(logsPath);
 }
 catch { }
 
@@ -67,14 +71,22 @@ builder.Services.AddScoped<IUserSeeder, UserSeeder>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IGameService, GameService>();
 
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
 builder.Services.AddSingleton<IEmailSender, ConsoleEmailSender>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(o =>
+    {
+        o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssemblyContaining<Fiap.CloudGames.Application.Users.Validators.UserRegisterDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<Fiap.CloudGames.Application.Games.Validators.CreateGameDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<Fiap.CloudGames.Application.Orders.Validators.CreateOrderDtoValidator>();
 
 builder.Services
     .AddAuthentication(o =>
@@ -125,17 +137,17 @@ builder.Services.AddSwaggerGen(c =>
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
-		{
-			new OpenApiSecurityScheme
-			{
-				Reference = new OpenApiReference
-				{
-					Type = ReferenceType.SecurityScheme,
-					Id = "Bearer"
-				}
-			},
-			Array.Empty<string>()
-		}
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
     });
 });
 
