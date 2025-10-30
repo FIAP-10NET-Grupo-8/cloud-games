@@ -21,6 +21,11 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 	- [Restauração de Conta (Admin)](#fluxo-de-restauracao-de-conta-admin)
 	- [Bloqueio/Desbloqueio de Conta (Admin)](#fluxo-de-bloqueio-desbloqueio-de-conta-admin)
 	- [Listagem de Usuários (Admin)](#fluxo-de-listagem-de-usuarios-admin)
+- [Gerenciamento de Jogos](#gerenciamento-de-jogos)
+	- [Criação de Jogo (Admin)](#fluxo-de-criacao-de-jogo-admin)
+	- [Edição de Jogo (Admin)](#fluxo-de-edicao-de-jogo-admin)
+	- [Exclusão de Jogo (Admin)](#fluxo-de-exclusao-de-jogo-admin)
+	- [Listagem de Jogos (Admin)](#fluxo-de-listagem-de-jogos-admin)
 
 ---
 
@@ -265,6 +270,66 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 1. Admin acessa gerenciamento de usuários.
 1. Sistema recupera e apresenta lista de usuários do banco de dados.
+
+---
+
+## Gerenciamento de Jogos {#gerenciamento-de-jogos}
+
+### Criação de Jogo (Admin) {#fluxo-de-criacao-de-jogo-admin}
+
+#### Caminho feliz - Criação bem-sucedida
+
+1. Admin acessa painel de administração → gerenciamento de jogos.
+1. Seleciona criar novo jogo e preenche detalhes (nome, descrição, categoria, etc.).
+1. Sistema valida dados e salva o novo jogo no banco de dados.
+1. Confirmação de criação é exibida.
+
+**Resultado esperado:** novo jogo criado e disponível no sistema.
+
+#### Caminhos alternativos
+
+- Dados inválidos: retornar campos a corrigir.
+- Jogo já existente: retornar erro informando duplicidade.
+
+
+---
+
+### Edição de Jogo (Admin) {#fluxo-de-edicao-de-jogo-admin}
+
+#### Caminho feliz - Edição bem-sucedida
+
+1. Admin seleciona jogo existente para editar.
+1. Altera detalhes do jogo conforme necessário.
+1. Sistema valida e salva as alterações.
+1. Confirmação de edição é exibida.
+
+#### Caminhos alternativos
+
+- Jogo não encontrado: retornar erro.
+- Dados inválidos: retornar campos a corrigir.
+- Jogo com nome duplicado: retornar erro informando duplicidade.
+
+---
+
+### Exclusão de Jogo (Admin) {#fluxo-de-exclusao-de-jogo-admin}
+
+#### Caminho feliz - Exclusão bem-sucedida
+1. Admin seleciona jogo para exclusão e confirma a ação.
+1. Sistema remove o jogo do banco de dados.
+1. Confirmação de exclusão é exibida.
+
+#### Caminhos alternativos
+
+- Jogo não encontrado: retornar erro.
+
+---
+
+### Listagem de Jogos (Admin) {#fluxo-de-listagem-de-jogos-admin}
+
+#### Caminho feliz - Listagem bem-sucedida
+
+1. Admin acessa gerenciamento de jogos.
+1. Sistema recupera e apresenta lista de jogos do banco de dados.
 
 ---
 
