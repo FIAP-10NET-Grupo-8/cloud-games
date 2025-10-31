@@ -33,7 +33,7 @@ namespace Fiap.CloudGames.Infrastructure.UserGamesLibrary.Repositories
             {
                 return await _context.UserGameLibrary
                     .Where(ug => ug.UserId == userId)
-                    .Select(ug => ug.Game)
+                    .Select(ug => ug.Game!)
                     .ToListAsync();
             }
         }

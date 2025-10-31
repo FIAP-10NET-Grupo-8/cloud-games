@@ -322,19 +322,19 @@ namespace Fiap.CloudGames.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("Fiap.CloudGames.Domain.Games.Entities.Game", b =>
-                {
-                    b.Navigation("UserGamesLibrary");
-                });
+            {
+                b.Navigation("UserGamesLibrary");
+            });
 
             modelBuilder.Entity("Fiap.CloudGames.Domain.Users.Entities.User", b =>
-                {
-                    b.Navigation("UserGamesLibrary");
-                });
+            {
+                b.Navigation("UserGamesLibrary");
+            });
 
             modelBuilder.Entity("Fiap.CloudGames.Domain.Orders.Entities.Order", b =>
-                {
-                    b.Navigation("Items");
-                });
+            {
+                b.Navigation("Items");
+            });
 #pragma warning restore 612, 618
         }
     }

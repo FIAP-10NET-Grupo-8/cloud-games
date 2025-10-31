@@ -1,10 +1,5 @@
 ﻿using Fiap.CloudGames.Domain.Games.Entities;
 using Fiap.CloudGames.Domain.Users.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Fiap.CloudGames.Domain.UserGamesLibrary.Entities
 {
@@ -19,7 +14,7 @@ namespace Fiap.CloudGames.Domain.UserGamesLibrary.Entities
 
         public DateTime PurchaseDate { get; set; }
 
-        public User User { get; set; }
-        public Game Game { get; set; }
+        public User? User { get; set; } = null!;
+        public Game? Game { get; set; } = null!;
     }
 }
