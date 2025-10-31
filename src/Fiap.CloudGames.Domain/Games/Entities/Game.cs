@@ -1,4 +1,6 @@
-﻿namespace Fiap.CloudGames.Domain.Games.Entities;
+﻿using Fiap.CloudGames.Domain.UserGamesLibrary.Entities;
+
+namespace Fiap.CloudGames.Domain.Games.Entities;
 
 /// <summary>
 /// Entity representing a Game in the catalog.
@@ -156,4 +158,6 @@ public class Game
         Active = false;
         UpdatedAt = DateTime.UtcNow;
     }
+
+    public ICollection<UserGameLibrary> UserGamesLibrary { get; set; } = new List<UserGameLibrary>();
 }
