@@ -8,6 +8,7 @@ using Fiap.CloudGames.Domain.Orders.Repositories;
 using Fiap.CloudGames.Domain.Shared.Interfaces;
 using Fiap.CloudGames.Domain.Shared.Options;
 using Fiap.CloudGames.Domain.UserGamesLibrary.Repositories;
+using Fiap.CloudGames.Domain.Users.Interfaces;
 using Fiap.CloudGames.Domain.Users.Repositories;
 using Fiap.CloudGames.Infrastructure.Auth;
 using Fiap.CloudGames.Infrastructure.Email;
@@ -72,7 +73,7 @@ builder.Services.AddOptions<AdminUserOptions>()
     .ValidateOnStart();
 
 // Add services to the container.
-builder.Services.AddSingleton<JwtService>();
+builder.Services.AddSingleton<IJwtService, JwtService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -183,9 +184,11 @@ using (var scope = app.Services.CreateScope())
 
     if (app.Environment.IsDevelopment())
     {
-        var seeder = scope.ServiceProvider.GetRequiredService<IUserSeeder>();
-        await seeder.SeedAsync();
-    }
+		var seeder = scope.ServiceProvider.GetRequiredService<IUserSeeder>();
+		using var cts = CancellationTokenSource.CreateLinkedTokenSource(app.Lifetime.ApplicationStopping);
+		cts.CancelAfter(TimeSpan.FromSeconds(30));
+		await seeder.SeedAsync(cts.Token);
+	}
 }
 
 // Configure the HTTP request pipeline.
