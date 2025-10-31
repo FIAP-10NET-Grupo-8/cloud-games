@@ -2,6 +2,11 @@
 
 ## Sumário 📝
 
+- Documentos
+    - [Instruções TC Fase 1](./docs/TC-NETT-FASE-1.md)
+    - [Processo de Colaboração](./PROCESSO-COLABORACAO.md)
+    - [Fluxos](./FLUXOS.md)
+    - [Jornadas de Solução](./docs/JORNADAS.md)
 - [Como rodar o projeto localmente](#como-rodar-o-projeto-localmente)
 	- [Pré-requisitos](#pre-requisitos)
 	- [Configurar segredos em DEV](#configurar-segredos-em-dev)
