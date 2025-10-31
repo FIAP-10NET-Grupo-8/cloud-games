@@ -16,8 +16,10 @@
 
 ---
 
+<a id="como-rodar-o-projeto-localmente"></a>
 ## Como rodar o projeto localmente ▶️
 
+<a id="pre-requisitos"></a>
 ### Pré-requisitos ⚙️
 - Visual Studio2022 ou Visual Studio Code. [Download Visual Studio](https://visualstudio.microsoft.com/downloads/) | [Download VS Code](https://code.visualstudio.com/download)
 - NET8 SDK mais recente instalado. [Download .NET8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
@@ -25,6 +27,7 @@
 - Git instalado para clonar o repositório. [Download Git](https://git-scm.com/downloads)
 - (Optional) Postman ou outra ferramenta para testar APIs REST. [Download Postman](https://www.postman.com/downloads/)
 
+<a id="configurar-segredos-em-dev"></a>
 ### Configurar segredos em DEV 🔒	
 Configurar String de Conexão do Banco de Dados:
 ```bash
@@ -70,6 +73,7 @@ dotnet user-secrets set "AdminUser:EmailConfirmed" true --project src/Fiap.Cloud
 > - O status do usuário administrativo deve ser "Active" para permitir o login imediato.
 > - O e-mail do usuário administrativo deve ser marcado como confirmado (true) para permitir o acesso imediato.
 
+<a id="executando-a-aplicacao"></a>
 ### Executando a aplicação ▶️
 Clonar o repositório:
 ```bash
@@ -107,6 +111,7 @@ http://localhost:5000/swagger
 ```
 ---
 
+<a id="estrutura-de-pastas-do-projeto"></a>
 ## Estrutura de pastas do Projeto 📁
 ```
 ├── src/
@@ -121,10 +126,12 @@ http://localhost:5000/swagger
 
 ---
 
+<a id="arquitetura-do-projeto"></a>
 ## Arquitetura do Projeto 🏛️
 
 Este repositório segue uma arquitetura em camadas, inspirada em padrões como Clean Architecture / Onion, organizada para separar responsabilidades, facilitar testes e permitir evolução independente das camadas.
 
+<a id="principais-projetos"></a>
 ### Principais projetos 📦
 - `src/Fiap.CloudGames.Api` — Camada de API: controllers, middlewares, configuração de pipeline HTTP e autenticação (Swagger, JWT).
 - `src/Fiap.CloudGames.Application` — Camada de aplicação: serviços, casos de uso e orquestração de regras de negócio.
@@ -132,6 +139,7 @@ Este repositório segue uma arquitetura em camadas, inspirada em padrões como C
 - `src/Fiap.CloudGames.Infrastructure` — Camada de infraestrutura: implementações concretas (persistência com EF Core, seeders, integrações externas, configuração de `AppDbContext`).
 - `tests/Fiap.CloudGames.Tests` — Testes unitários para serviços e regras de negócio.
 
+<a id="tecnologias-e-escolhas"></a>
 ### Tecnologias e escolhas ⚖️
 - Target framework: `.NET8`
 - Persistência: `Entity Framework Core` com provedor `SQLite` (arquivo local para DEV). Migrations centralizadas em `src/Fiap.CloudGames.Infrastructure/Persistence/Migrations`.
@@ -141,6 +149,7 @@ Este repositório segue uma arquitetura em camadas, inspirada em padrões como C
 - Documentação da API: `Swagger` (acessível em `/swagger` quando executando localmente).
 - Seeders: classes de seed (ex.: `UserSeeder`) para popular dados iniciais.
 
+<a id="bibliotecas-principais-utilizadas"></a>
 ### Bibliotecas principais utilizadas 🧰
 - `Microsoft.EntityFrameworkCore` e `Microsoft.EntityFrameworkCore.Sqlite`: ORM e provedor SQLite.
 - `Microsoft.AspNetCore.Authentication.JwtBearer`: Suporte a autenticação via JWT.
@@ -150,6 +159,7 @@ Este repositório segue uma arquitetura em camadas, inspirada em padrões como C
 - `FluentValidation`: Validação fluente de objetos e modelos.
 - `xUnit`: Framework de testes unitários.
 
+<a id="diagrama-de-dependencias-entre-camadas"></a>
 ### Diagrama de dependências entre camadas 🧩
 ```mermaid
 graph TD
@@ -164,6 +174,7 @@ graph TD
 
 ---
 
+<a id="como-adicionar-migracoes-e-atualizar-banco-de-dados"></a>
 ## Como Adicionar migrações e atualizar banco de dados 🛠️
 Abrir o Package Manager Console com o projeto Fiap.CloudGames.Infrastructure selecionado como projeto de inicialização e executar o comando:
 ```bash
