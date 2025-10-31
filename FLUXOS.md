@@ -21,12 +21,18 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 	- [Restauração de Conta (Admin)](#fluxo-de-restauracao-de-conta-admin)
 	- [Bloqueio/Desbloqueio de Conta (Admin)](#fluxo-de-bloqueio-desbloqueio-de-conta-admin)
 	- [Listagem de Usuários (Admin)](#fluxo-de-listagem-de-usuarios-admin)
+- [Gerenciamento de Jogos](#gerenciamento-de-jogos)
+	- [Criação de Jogo (Admin)](#fluxo-de-criacao-de-jogo-admin)
+	- [Edição de Jogo (Admin)](#fluxo-de-edicao-de-jogo-admin)
+	- [Exclusão de Jogo (Admin)](#fluxo-de-exclusao-de-jogo-admin)
+	- [Listagem de Jogos (Admin)](#fluxo-de-listagem-de-jogos-admin)
 - [Gerenciamento de Pedidos](#gerenciamento-de-pedidos)
-	- [Criação de Pedido](#fluxo-de-criacao-de-pedido)
-	- [Marcar Pedido como Pago](#fluxo-de-marcar-pedido-pago)
-	- [Solicitar Estorno](#fluxo-de-solicitar-estorno)
-	- [Marcar Pedido como Estornado](#fluxo-de-marcar-estornado)
-	- [Cancelamento de Pedido](#fluxo-de-cancelamento-de-pedido)
+  - [Criação de Pedido](#fluxo-de-criacao-de-pedido)
+  - [Consulta de Pedidos](#fluxo-de-consulta-de-pedidos)
+  - [Marcar Pedido como Pago](#fluxo-de-marcar-pedido-pago)
+  - [Solicitar Estorno](#fluxo-de-solicitar-estorno)
+  - [Marcar Pedido como Estornado](#fluxo-de-marcar-estornado)
+  - [Cancelamento de Pedido](#fluxo-de-cancelamento-de-pedido)
 
 ---
 
@@ -274,18 +280,78 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
+## Gerenciamento de Jogos {#gerenciamento-de-jogos}
+
+### Criação de Jogo (Admin) {#fluxo-de-criacao-de-jogo-admin}
+
+#### Caminho feliz - Criação bem-sucedida
+
+1. Admin acessa painel de administração → gerenciamento de jogos.
+1. Seleciona criar novo jogo e preenche detalhes (nome, descrição, categoria, etc.).
+1. Sistema valida dados e salva o novo jogo no banco de dados.
+1. Confirmação de criação é exibida.
+
+**Resultado esperado:** novo jogo criado e disponível no sistema.
+
+#### Caminhos alternativos
+
+- Dados inválidos: retornar campos a corrigir.
+- Jogo já existente: retornar erro informando duplicidade.
+
+
+---
+
+### Edição de Jogo (Admin) {#fluxo-de-edicao-de-jogo-admin}
+
+#### Caminho feliz - Edição bem-sucedida
+
+1. Admin seleciona jogo existente para editar.
+1. Altera detalhes do jogo conforme necessário.
+1. Sistema valida e salva as alterações.
+1. Confirmação de edição é exibida.
+
+#### Caminhos alternativos
+
+- Jogo não encontrado: retornar erro.
+- Dados inválidos: retornar campos a corrigir.
+- Jogo com nome duplicado: retornar erro informando duplicidade.
+
+---
+
+### Exclusão de Jogo (Admin) {#fluxo-de-exclusao-de-jogo-admin}
+
+#### Caminho feliz - Exclusão bem-sucedida
+1. Admin seleciona jogo para exclusão e confirma a ação.
+1. Sistema remove o jogo do banco de dados.
+1. Confirmação de exclusão é exibida.
+
+#### Caminhos alternativos
+
+- Jogo não encontrado: retornar erro.
+
+---
+
+### Listagem de Jogos (Admin) {#fluxo-de-listagem-de-jogos-admin}
+
+#### Caminho feliz - Listagem bem-sucedida
+
+1. Admin acessa gerenciamento de jogos.
+1. Sistema recupera e apresenta lista de jogos do banco de dados.
+
+---
+
 ## Gerenciamento de Pedidos {#gerenciamento-de-pedidos}
 
 ### Criação de Pedido {#fluxo-de-criacao-de-pedido}
 
 #### Caminho feliz — Pedido criado com sucesso
 
-1. Sistema recebe solicitação de criação de pedido com detalhes do usuário e itens.
+1. Sistema recebe solicitação de criação de pedido com detalhes do usuário e itens (pode incluir o header `Idempotency-Key`).
 1. Sistema valida dados do usuário e lista de itens.
-1. Se válidos, cria o pedido, calcula o total e define o status como `pending`.
+1. Se válidos, cria o pedido, calcula o total e define o status como `PendingPayment`.
 1. Retorna confirmação com detalhes do pedido.
 
-**Resultado esperado:** pedido criado com status `pending`.
+**Resultado esperado:** pedido criado com status `PendingPayment`.
 
 #### Caminhos alternativos
 
@@ -293,7 +359,7 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 - Itens indisponíveis: retornar erro informando quais itens não estão disponíveis.
 - Usuário não encontrado: retornar erro informando que o usuário não existe.
 - Erro no cálculo do total: retornar erro informando falha no processamento do pedido.
-- Requisição duplicada: retornar erro informando que o pedido já foi processado.
+- Requisição duplicada (mesma `Idempotency-Key`): retornar o mesmo pedido previamente processado.
 
 ---
 
@@ -367,10 +433,10 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 1. Usuário solicita cancelamento de um pedido pendente.
 1. Sistema valida a solicitação e o status do pedido.
-1. Se válido, atualiza o status do pedido para `canceled`.
+1. Se válido, atualiza o status do pedido para `Cancelled`.
 1. Notifica o usuário sobre o cancelamento.
 
-**Resultado esperado:** pedido atualizado para status `canceled`.
+**Resultado esperado:** pedido atualizado para status `Cancelled`.
 
 #### Caminhos alternativos
 
