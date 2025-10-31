@@ -27,12 +27,12 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 	- [Exclusão de Jogo (Admin)](#fluxo-de-exclusao-de-jogo-admin)
 	- [Listagem de Jogos (Admin)](#fluxo-de-listagem-de-jogos-admin)
 - [Gerenciamento de Pedidos](#gerenciamento-de-pedidos)
-  - [Criação de Pedido](#fluxo-de-criacao-de-pedido)
-  - [Consulta de Pedidos](#fluxo-de-consulta-de-pedidos)
-  - [Marcar Pedido como Pago](#fluxo-de-marcar-pedido-pago)
-  - [Solicitar Estorno](#fluxo-de-solicitar-estorno)
-  - [Marcar Pedido como Estornado](#fluxo-de-marcar-estornado)
-  - [Cancelamento de Pedido](#fluxo-de-cancelamento-de-pedido)
+	- [Criação de Pedido](#fluxo-de-criacao-de-pedido)
+	- [Consulta de Pedidos](#fluxo-de-consulta-de-pedidos)
+	- [Marcar Pedido como Pago](#fluxo-de-marcar-pedido-pago)
+	- [Solicitar Estorno](#fluxo-de-solicitar-estorno)
+	- [Marcar Pedido como Estornado](#fluxo-de-marcar-estornado)
+	- [Cancelamento de Pedido](#fluxo-de-cancelamento-de-pedido)
 
 ---
 
@@ -44,7 +44,11 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Nome do fluxo {#id-do-fluxo}
+<a id="id-da-categoria"></a>
+## Categoria de Exemplo (opcional)
+
+<a id="id-do-fluxo"></a>
+### Nome do fluxo
 
 #### Caminho feliz - Descrição curta
 
@@ -63,9 +67,11 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-## Autenticação e Autorização {#autenticacao-e-autorizacao}
+<a id="autenticacao-e-autorizacao"></a>
+## Autenticação e Autorização
 
-### Login {#fluxo-de-login}
+<a id="fluxo-de-login"></a>
+### Login
 
 #### Caminho feliz — Login bem-sucedido
 
@@ -88,7 +94,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Registro {#fluxo-de-registro}
+<a id="fluxo-de-registro"></a>
+### Registro
 
 #### Caminho feliz — Registro bem-sucedido
 
@@ -108,7 +115,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Confirmação de E-mail {#fluxo-de-confirmacao-de-e-mail}
+<a id="fluxo-de-confirmacao-de-e-mail"></a>
+### Confirmação de E-mail
 
 #### Caminho feliz — Confirmação bem-sucedida
 
@@ -126,7 +134,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Esqueci a Senha {#fluxo-de-esqueci-a-senha}
+<a id="fluxo-de-esqueci-a-senha"></a>
+### Esqueci a Senha
 
 #### Caminho feliz — Recuperação bem-sucedida
 
@@ -144,7 +153,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Visualização de Perfil do Usuário {#fluxo-de-visualizacao-de-perfil-do-usuario}
+<a id="fluxo-de-visualizacao-de-perfil-do-usuario"></a>
+### Visualização de Perfil do Usuário
 
 #### Caminho feliz — Visualização bem-sucedida
 
@@ -157,7 +167,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Redefinição de Senha {#fluxo-de-redefinicao-de-senha}
+<a id="fluxo-de-redefinicao-de-senha"></a>
+### Redefinição de Senha
 
 #### Caminho feliz — Redefinição bem-sucedida
 
@@ -175,9 +186,11 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-## Administração de Usuários {#administracao-de-usuarios}
+<a id="administracao-de-usuarios"></a>
+## Administração de Usuários
 
-### Criação de Usuário (Admin) {#fluxo-de-criacao-de-usuario-admin}
+<a id="fluxo-de-criacao-de-usuario-admin"></a>
+### Criação de Usuário (Admin)
 
 #### Caminho feliz — Criação bem-sucedida
 
@@ -195,7 +208,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Primeiro Acesso do Usuário {#fluxo-de-primeiro-acesso-do-usuario}
+<a id="fluxo-de-primeiro-acesso-do-usuario"></a>
+### Primeiro Acesso do Usuário
 
 #### Caminho feliz — Primeiro acesso bem-sucedido
 
@@ -211,7 +225,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Edição de Usuário (Admin) {#fluxo-de-edicao-de-usuario-admin}
+<a id="fluxo-de-edicao-de-usuario-admin"></a>
+### Edição de Usuário (Admin)
 
 #### Caminho feliz — Edição bem-sucedida
 
@@ -227,7 +242,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Exclusão de Usuário (Admin) {#fluxo-de-exclusao-de-usuario-admin}
+<a id="fluxo-de-exclusao-de-usuario-admin"></a>
+### Exclusão de Usuário (Admin)
 
 #### Caminho feliz — Exclusão bem-sucedida
 
@@ -242,7 +258,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Restauração de Conta (Admin) {#fluxo-de-restauracao-de-conta-admin}
+<a id="fluxo-de-restauracao-de-conta-admin"></a>
+### Restauração de Conta (Admin)
 
 #### Caminho feliz — Restauração bem-sucedida
 
@@ -256,7 +273,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Bloqueio/Desbloqueio de Conta (Admin) {#fluxo-de-bloqueio-desbloqueio-de-conta-admin}
+<a id="fluxo-de-bloqueio-desbloqueio-de-conta-admin"></a>
+### Bloqueio/Desbloqueio de Conta (Admin)
 
 #### Caminho feliz — Bloqueio/Desbloqueio bem-sucedido
 
@@ -271,7 +289,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Listagem de Usuários (Admin) {#fluxo-de-listagem-de-usuarios-admin}
+<a id="fluxo-de-listagem-de-usuarios-admin"></a>
+### Listagem de Usuários (Admin)
 
 #### Caminho feliz — Listagem bem-sucedida
 
@@ -280,9 +299,11 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-## Gerenciamento de Jogos {#gerenciamento-de-jogos}
+<a id="gerenciamento-de-jogos"></a>
+## Gerenciamento de Jogos
 
-### Criação de Jogo (Admin) {#fluxo-de-criacao-de-jogo-admin}
+<a id="fluxo-de-criacao-de-jogo-admin"></a>
+### Criação de Jogo (Admin)
 
 #### Caminho feliz - Criação bem-sucedida
 
@@ -301,7 +322,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Edição de Jogo (Admin) {#fluxo-de-edicao-de-jogo-admin}
+<a id="fluxo-de-edicao-de-jogo-admin"></a>
+### Edição de Jogo (Admin)
 
 #### Caminho feliz - Edição bem-sucedida
 
@@ -318,7 +340,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Exclusão de Jogo (Admin) {#fluxo-de-exclusao-de-jogo-admin}
+<a id="fluxo-de-exclusao-de-jogo-admin"></a>
+### Exclusão de Jogo (Admin)
 
 #### Caminho feliz - Exclusão bem-sucedida
 1. Admin seleciona jogo para exclusão e confirma a ação.
@@ -331,7 +354,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Listagem de Jogos (Admin) {#fluxo-de-listagem-de-jogos-admin}
+<a id="fluxo-de-listagem-de-jogos-admin"></a>
+### Listagem de Jogos (Admin)
 
 #### Caminho feliz - Listagem bem-sucedida
 
@@ -340,9 +364,11 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-## Gerenciamento de Pedidos {#gerenciamento-de-pedidos}
+<a id="gerenciamento-de-pedidos"></a>
+## Gerenciamento de Pedidos
 
-### Criação de Pedido {#fluxo-de-criacao-de-pedido}
+<a id="fluxo-de-criacao-de-pedido"></a>
+### Criação de Pedido
 
 #### Caminho feliz — Pedido criado com sucesso
 
@@ -363,7 +389,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Marcar Pedido como Pago {#fluxo-de-marcar-pedido-pago}
+<a id="fluxo-de-marcar-pedido-pago"></a>
+### Marcar Pedido como Pago
 
 #### Caminho feliz — Pagamento confirmado
 
@@ -383,7 +410,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Solicitar Estorno {#fluxo-de-solicitar-estorno}
+<a id="fluxo-de-solicitar-estorno"></a>
+### Solicitar Estorno
 
 #### Caminho feliz — Solicitação de estorno registrada
 
@@ -405,7 +433,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Marcar Pedido como Estornado {#fluxo-de-marcar-estornado}
+<a id="fluxo-de-marcar-estornado"></a>
+### Marcar Pedido como Estornado
 
 #### Caminho feliz — Estorno concluído
 
@@ -427,7 +456,8 @@ Documento com os principais fluxos do sistema, descrevendo as etapas, caminhos f
 
 ---
 
-### Cancelamento de Pedido {#fluxo-de-cancelamento-de-pedido}
+<a id="fluxo-de-cancelamento-de-pedido"></a>
+### Cancelamento de Pedido
 
 #### Caminho feliz — Cancelamento bem-sucedido
 
