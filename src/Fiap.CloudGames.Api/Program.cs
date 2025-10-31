@@ -1,13 +1,17 @@
 using Fiap.CloudGames.Api.Middleware;
 using Fiap.CloudGames.Application.Games.Services;
+using Fiap.CloudGames.Application.UserGamesLibrary.Services;
 using Fiap.CloudGames.Application.Users.Options;
 using Fiap.CloudGames.Application.Users.Services;
 using Fiap.CloudGames.Domain.Games.Repositories;
+using Fiap.CloudGames.Domain.UserGamesLibrary.Entities;
+using Fiap.CloudGames.Domain.UserGamesLibrary.Repositories;
 using Fiap.CloudGames.Domain.Users.Repositories;
 using Fiap.CloudGames.Infrastructure.Auth;
 using Fiap.CloudGames.Infrastructure.Email;
 using Fiap.CloudGames.Infrastructure.Games.Repositories;
 using Fiap.CloudGames.Infrastructure.Persistence;
+using Fiap.CloudGames.Infrastructure.UserGamesLibrary.Repositories;
 using Fiap.CloudGames.Infrastructure.Users.Repositories;
 using Fiap.CloudGames.Infrastructure.Users.Seeders;
 using FluentValidation;
@@ -82,6 +86,9 @@ builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
+builder.Services.AddScoped<ILibraryService, LibraryService>();
+builder.Services.AddScoped<IUserGameLibraryRepository, UserGameLibraryRepository>();
+
 builder.Services.AddSingleton<IEmailSender, ConsoleEmailSender>();
 
 builder.Services.AddControllers()
@@ -132,7 +139,7 @@ builder.Services.AddSwaggerGen(c =>
 
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fiap.CloudGames API", Version = "v1" });
 
-	// JWT bearer auth in swagger
+    // JWT bearer auth in swagger
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",

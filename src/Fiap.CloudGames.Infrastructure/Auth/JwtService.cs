@@ -22,7 +22,8 @@ public class JwtService(IOptions<JwtOptions> options)
 			new(ClaimTypes.Name, name),
 			new(ClaimTypes.Email, email),
 			new(ClaimTypes.Role, role),
-		};
+            new Claim("userId", id.ToString()),
+        };
 
 		var token = new JwtSecurityToken(
 			issuer: _options.Issuer,
