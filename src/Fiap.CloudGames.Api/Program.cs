@@ -1,19 +1,22 @@
 using Fiap.CloudGames.Api.Middleware;
 using Fiap.CloudGames.Application.Games.Services;
-using Fiap.CloudGames.Application.Users.Options;
+using Fiap.CloudGames.Application.Orders.Services;
 using Fiap.CloudGames.Application.Users.Services;
 using Fiap.CloudGames.Domain.Games.Repositories;
+using Fiap.CloudGames.Domain.Orders.Repositories;
+using Fiap.CloudGames.Domain.Shared.Interfaces;
+using Fiap.CloudGames.Domain.Shared.Options;
 using Fiap.CloudGames.Domain.Users.Repositories;
 using Fiap.CloudGames.Infrastructure.Auth;
 using Fiap.CloudGames.Infrastructure.Email;
 using Fiap.CloudGames.Infrastructure.Games.Repositories;
+using Fiap.CloudGames.Infrastructure.Orders.Repositories;
 using Fiap.CloudGames.Infrastructure.Persistence;
 using Fiap.CloudGames.Infrastructure.Users.Repositories;
 using Fiap.CloudGames.Infrastructure.Users.Seeders;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -22,9 +25,6 @@ using Serilog.Formatting.Json;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
-using Fiap.CloudGames.Application.Orders.Services;
-using Fiap.CloudGames.Domain.Orders.Repositories;
-using Fiap.CloudGames.Infrastructure.Orders.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,7 +82,7 @@ builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
-builder.Services.AddSingleton<IEmailSender, ConsoleEmailSender>();
+builder.Services.AddSingleton<IEmailService, ConsoleEmailService>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(o =>

@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Identity.UI.Services;
+using Fiap.CloudGames.Domain.Shared.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Fiap.CloudGames.Infrastructure.Email;
 
-public class ConsoleEmailSender(ILogger<ConsoleEmailSender> logger) : IEmailSender
+public class ConsoleEmailService(ILogger<ConsoleEmailService> logger) : IEmailService
 {
-	private readonly ILogger<ConsoleEmailSender> logger = logger;
+	private readonly ILogger<ConsoleEmailService> logger = logger;
 
 	public Task SendEmailAsync(string email, string subject, string htmlMessage)
     {

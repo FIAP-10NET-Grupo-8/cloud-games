@@ -1,9 +1,9 @@
 using Fiap.CloudGames.Application.Users.Dtos;
 using Fiap.CloudGames.Application.Users.Services;
+using Fiap.CloudGames.Domain.Shared.Interfaces;
 using Fiap.CloudGames.Domain.Users.Enums;
 using Fiap.CloudGames.Infrastructure.Auth;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -14,10 +14,10 @@ namespace Fiap.CloudGames.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class UsersController(IUserService userService, IEmailSender emailSender, JwtService jwtService) : ControllerBase
+public class UsersController(IUserService userService, IEmailService emailService, JwtService jwtService) : ControllerBase
 {
 	private readonly IUserService _userService = userService;
-	private readonly IEmailSender _emailSender = emailSender;
+	private readonly IEmailService _emailService = emailService;
 	private readonly JwtService _jwtService = jwtService;
 
 	/// <summary>
@@ -85,7 +85,7 @@ public class UsersController(IUserService userService, IEmailSender emailSender,
 	{
 		var created = await _userService.RegisterAsync(dto);
 		var token = await _userService.GenerateEmailConfirmationAsync(created.Email);
-		await _emailSender.SendEmailAsync(created.Email, "Confirmação de email", $"Seu token de confirmação: {token}");
+		await _emailService.SendEmailAsync(created.Email, "Confirmação de email", $"Seu token de confirmação: {token}");
 		return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
 	}
 
@@ -137,7 +137,7 @@ public class UsersController(IUserService userService, IEmailSender emailSender,
 	{
 		var created = await _userService.CreateByAdminAsync(dto);
 		var token = await _userService.GenerateFirstAccessAsync(created.Email);
-		await _emailSender.SendEmailAsync(created.Email, "Acesso inicial - defina sua senha", $"Utilize este token para definir sua senha inicial: {token}");
+		await _emailService.SendEmailAsync(created.Email, "Acesso inicial - defina sua senha", $"Utilize este token para definir sua senha inicial: {token}");
 		return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
 	}
 
