@@ -1,9 +1,9 @@
 ﻿using Fiap.CloudGames.Application.Users.Dtos;
+using Fiap.CloudGames.Domain.Shared.Options;
 using Fiap.CloudGames.Domain.Users.Entities;
 using Fiap.CloudGames.Domain.Users.Enums;
 using Fiap.CloudGames.Domain.Users.Repositories;
 using Microsoft.Extensions.Options;
-using Fiap.CloudGames.Application.Users.Options;
 
 namespace Fiap.CloudGames.Application.Users.Services;
 

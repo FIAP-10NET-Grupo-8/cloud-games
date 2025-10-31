@@ -1,6 +1,6 @@
 using Fiap.CloudGames.Domain.Users.Enums;
 
-namespace Fiap.CloudGames.Application.Users.Options;
+namespace Fiap.CloudGames.Domain.Shared.Options;
 
 public class AdminUserOptions
 {
@@ -34,7 +34,7 @@ public class AdminUserOptions
         // Validate email format using domain value object
         try
         {
-            Fiap.CloudGames.Domain.Users.ValueObjects.Email.Create(Email);
+			Users.ValueObjects.Email.Create(Email);
         }
         catch (ArgumentException ex)
         {
@@ -44,7 +44,7 @@ public class AdminUserOptions
         // Validate password complexity using domain value object
         try
         {
-            _ = Fiap.CloudGames.Domain.Users.ValueObjects.Password.Create(Password);
+            _ = Users.ValueObjects.Password.Create(Password);
         }
         catch (ArgumentException ex)
         {
