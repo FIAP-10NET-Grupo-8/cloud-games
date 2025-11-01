@@ -24,6 +24,27 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{DAA9E0B3-AD27-403F-BAA3-D2DABBA965A2}"
+	ProjectSection(SolutionItems) = preProject
+		docs\JORNADAS.md = docs\JORNADAS.md
+		docs\TC-NETT-FASE-1.md = docs\TC-NETT-FASE-1.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "jornadas", "jornadas", "{B2487D84-65AA-48B0-A8B9-CACF4A5DD89F}"
+	ProjectSection(SolutionItems) = preProject
+		docs\jornadas\jornada-admin-gerenciamento-usuarios.md = docs\jornadas\jornada-admin-gerenciamento-usuarios.md
+		docs\jornadas\jornada-admin-gerenciamento-jogos.md = docs\jornadas\jornada-admin-gerenciamento-jogos.md
+		docs\jornadas\jornada-autenticacao-login.md = docs\jornadas\jornada-autenticacao-login.md
+		docs\jornadas\jornada-cadastro-autenticacao.md = docs\jornadas\jornada-cadastro-autenticacao.md
+		docs\jornadas\jornada-cadastro-self-registration.md = docs\jornadas\jornada-cadastro-self-registration.md
+		docs\jornadas\jornada-listagem-detalhe-jogos.md = docs\jornadas\jornada-listagem-detalhe-jogos.md
+		docs\jornadas\jornada-primeiro-acesso-admin-seed.md = docs\jornadas\jornada-primeiro-acesso-admin-seed.md
+		docs\jornadas\jornada-primeiro-acesso-admin.md = docs\jornadas\jornada-primeiro-acesso-admin.md
+		docs\jornadas\jornada-recuperacao-senha.md = docs\jornadas\jornada-recuperacao-senha.md
+		docs\jornadas\jornada-seed-admin.md = docs\jornadas\jornada-seed-admin.md
+		docs\jornadas\template-jornada.md = docs\jornadas\template-jornada.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +81,8 @@ Global
 		{74325975-591F-45CE-8561-322B03407A33} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{F6C3F0F4-F037-48B0-8E84-38D2E58DFF22} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{2FF32398-B664-4938-8F72-DA82B9030E22} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{DAA9E0B3-AD27-403F-BAA3-D2DABBA965A2} = {380A7511-A354-6D7A-0CC0-8FA1F1BA7B6C}
+		{B2487D84-65AA-48B0-A8B9-CACF4A5DD89F} = {DAA9E0B3-AD27-403F-BAA3-D2DABBA965A2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3F3C1E0E-569A-49E8-B3A8-52EC20D7C73F}
