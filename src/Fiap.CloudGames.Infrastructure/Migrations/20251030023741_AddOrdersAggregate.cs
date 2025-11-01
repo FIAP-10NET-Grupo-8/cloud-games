@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Fiap.CloudGames.Infrastructure.Persistence.Migrations
+namespace Fiap.CloudGames.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class AddOrdersAggregate : Migration
