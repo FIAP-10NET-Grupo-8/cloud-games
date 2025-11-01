@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Fiap.CloudGames.Infrastructure.Persistence.Migrations
+namespace Fiap.CloudGames.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20251030023741_AddOrdersAggregate")]
