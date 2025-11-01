@@ -11,10 +11,10 @@ public class UserSeeder(IUserRepository userRepository, IOptions<AdminUserOption
     private readonly IUserRepository _userRepository = userRepository;
     private readonly AdminUserOptions _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
 
-	public async Task SeedAsync()
+	public async Task SeedAsync(CancellationToken ct)
     {
         var adminEmail = _options.Email;
-        var existing = await _userRepository.GetByEmailAsync(adminEmail!);
+        var existing = await _userRepository.GetByEmailAsync(adminEmail, ct);
         if (existing is not null) return;
 
         var user = User.Create(
@@ -28,6 +28,6 @@ public class UserSeeder(IUserRepository userRepository, IOptions<AdminUserOption
         if (_options.EmailConfirmed)
             user.MarkEmailConfirmed();
 
-        await _userRepository.AddAsync(user);
+        await _userRepository.AddAsync(user, ct);
     }
 }

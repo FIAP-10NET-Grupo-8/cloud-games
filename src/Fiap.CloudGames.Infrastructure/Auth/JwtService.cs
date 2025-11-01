@@ -1,4 +1,5 @@
 ﻿using Fiap.CloudGames.Domain.Users.Entities;
+using Fiap.CloudGames.Domain.Users.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -7,11 +8,11 @@ using System.Text;
 
 namespace Fiap.CloudGames.Infrastructure.Auth;
 
-public class JwtService(IOptions<JwtOptions> options)
+public class JwtService(IOptions<JwtOptions> options) : IJwtService
 {
 	private readonly JwtOptions _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
 
-	public string GenerateToken(Guid id, string name, string email, string role)
+	public string GenerateToken(Guid id, string name, string email, string role, CancellationToken ct)
 	{
 		var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Secret));
 		var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -36,5 +37,5 @@ public class JwtService(IOptions<JwtOptions> options)
 		return new JwtSecurityTokenHandler().WriteToken(token);
 	}
 
-	public string GenerateToken(User user) => GenerateToken(user.Id, user.Name, user.Email.Address, user.Role.ToString());
+	public string GenerateToken(User user, CancellationToken ct) => GenerateToken(user.Id, user.Name, user.Email.Address, user.Role.ToString(), ct);
 }

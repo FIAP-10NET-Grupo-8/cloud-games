@@ -4,5 +4,5 @@ namespace Fiap.CloudGames.Infrastructure.Users.Seeders;
 
 public interface IUserSeeder
 {
-    Task SeedAsync();
+    Task SeedAsync(CancellationToken ct);
 }
