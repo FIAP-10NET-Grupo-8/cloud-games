@@ -1,10 +1,12 @@
 using Fiap.CloudGames.Api.Middleware;
 using Fiap.CloudGames.Application.Games.Services;
 using Fiap.CloudGames.Application.Orders.Services;
+using Fiap.CloudGames.Application.Promotions.Services;
 using Fiap.CloudGames.Application.UserGamesLibrary.Services;
 using Fiap.CloudGames.Application.Users.Services;
 using Fiap.CloudGames.Domain.Games.Repositories;
 using Fiap.CloudGames.Domain.Orders.Repositories;
+using Fiap.CloudGames.Domain.Promotions.Repositories;
 using Fiap.CloudGames.Domain.Shared.Interfaces;
 using Fiap.CloudGames.Domain.Shared.Options;
 using Fiap.CloudGames.Domain.UserGamesLibrary.Repositories;
@@ -15,6 +17,7 @@ using Fiap.CloudGames.Infrastructure.Email;
 using Fiap.CloudGames.Infrastructure.Games.Repositories;
 using Fiap.CloudGames.Infrastructure.Orders.Repositories;
 using Fiap.CloudGames.Infrastructure.Persistence;
+using Fiap.CloudGames.Infrastructure.Promotions.Repositories;
 using Fiap.CloudGames.Infrastructure.UserGamesLibrary.Repositories;
 using Fiap.CloudGames.Infrastructure.Users.Repositories;
 using Fiap.CloudGames.Infrastructure.Users.Seeders;
@@ -83,6 +86,9 @@ builder.Services.AddScoped<IUserSeeder, UserSeeder>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IGameService, GameService>();
 
+builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
+builder.Services.AddScoped<IPromotionService, PromotionService>();
+
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
@@ -102,6 +108,7 @@ builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssemblyContaining<Fiap.CloudGames.Application.Users.Validators.UserRegisterDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<Fiap.CloudGames.Application.Games.Validators.CreateGameDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<Fiap.CloudGames.Application.Orders.Validators.CreateOrderDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<Fiap.CloudGames.Application.Promotions.Validators.CreatePromotionDtoValidator>();
 
 builder.Services
     .AddAuthentication(o =>
