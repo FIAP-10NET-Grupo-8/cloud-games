@@ -12,6 +12,15 @@ namespace Fiap.CloudGames.Domain.UserGamesLibrary.Repositories
     {
         Task AddAsync(UserGameLibrary userGameLibrary);
         Task<UserGameLibrary?> GetAsync(Guid userId, Guid gameId);
-        Task<IEnumerable<Game>> GetGamesByUserIdAsync(Guid userId);
+        Task DeleteAsync(UserGameLibrary userGame);
+        Task<IEnumerable<Game>> GetGamesByUserIdAsync(
+            Guid userId,
+            string? nome,
+            string? categoria,
+            string? distribuidora,
+            string? desenvolvedora,
+            DateTime? dataInicio,
+            DateTime? dataFim
+        );
     }
 }

@@ -28,14 +28,45 @@ namespace Fiap.CloudGames.Infrastructure.UserGamesLibrary.Repositories
             return await _context.UserGameLibrary.FindAsync(userId, gameId);
         }
 
-        public async Task<IEnumerable<Game>> GetGamesByUserIdAsync(Guid userId)
+        public async Task DeleteAsync(UserGameLibrary userGame)
         {
-            {
-                return await _context.UserGameLibrary
-                    .Where(ug => ug.UserId == userId)
-                    .Select(ug => ug.Game!)
-                    .ToListAsync();
-            }
+            _context.UserGameLibrary.Remove(userGame);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<Game>> GetGamesByUserIdAsync(
+                    Guid userId,
+                    string? nome,
+                    string? categoria,
+                    string? distribuidora,
+                    string? desenvolvedora,
+                    DateTime? dataInicio,
+                    DateTime? dataFim)
+        {
+            var query = _context.UserGameLibrary
+                .Where(ug => ug.UserId == userId)
+                .Select(ug => ug.Game);
+
+            // Lógica de filtro dinâmico
+            if (!string.IsNullOrEmpty(nome))
+                query = query.Where(g => g.Title.Contains(nome));
+
+            if (!string.IsNullOrEmpty(categoria))
+                query = query.Where(g => g.Genre != null && g.Genre.Contains(categoria));
+
+            if (!string.IsNullOrEmpty(desenvolvedora))
+                query = query.Where(g => g.Developer.Contains(desenvolvedora));
+
+            if (!string.IsNullOrEmpty(distribuidora))
+                query = query.Where(g => g.Publisher.Contains(distribuidora));
+
+            if (dataInicio.HasValue)
+                query = query.Where(g => g.ReleaseDate >= dataInicio.Value);
+
+            if (dataFim.HasValue)
+                query = query.Where(g => g.ReleaseDate <= dataFim.Value);
+
+            return await query.ToListAsync();
         }
     }
 }

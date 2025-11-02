@@ -1,4 +1,5 @@
-﻿using Fiap.CloudGames.Domain.Games.Entities;
+﻿using Fiap.CloudGames.Application.UserGamesLibrary.Dtos;
+using Fiap.CloudGames.Domain.Games.Entities;
 using Fiap.CloudGames.Domain.UserGamesLibrary.Entities;
 using Fiap.CloudGames.Domain.UserGamesLibrary.Repositories;
 using System;
@@ -37,9 +38,30 @@ namespace Fiap.CloudGames.Application.UserGamesLibrary.Services
             return true;
         }
 
-        public async Task<IEnumerable<Game>> GetGamesFromLibraryAsync(Guid userId)
+        public async Task<bool> RemoveGameFromLibraryAsync(Guid userId, Guid gameId)
         {
-            return await _userGameLibraryRepository.GetGamesByUserIdAsync(userId);
+            var gameToRemove = await _userGameLibraryRepository.GetAsync(userId, gameId);
+
+            if (gameToRemove == null)
+            {
+                return false;
+            }
+
+            await _userGameLibraryRepository.DeleteAsync(gameToRemove);
+            return true;
+        }
+
+        public async Task<IEnumerable<Game>> GetGamesFromLibraryAsync(Guid userId, LibraryQueryDto queryParams)
+        {
+            return await _userGameLibraryRepository.GetGamesByUserIdAsync(
+                userId,
+                queryParams.Nome,
+                queryParams.Categoria,
+                queryParams.Distribuidora,
+                queryParams.Desenvolvedora,
+                queryParams.DataInicio,
+                queryParams.DataFim
+            );
         }
     }
 }
