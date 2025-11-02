@@ -410,6 +410,8 @@ namespace Fiap.CloudGames.Infrastructure.Migrations
 
                     b.Navigation("Period")
                         .IsRequired();
+                });
+
             modelBuilder.Entity("Fiap.CloudGames.Domain.Carts.Entities.CartItem", b =>
                 {
                     b.HasOne("Fiap.CloudGames.Domain.Carts.Entities.Cart", null)

@@ -3,7 +3,6 @@ using Fiap.CloudGames.Domain.Orders.Entities;
 using Fiap.CloudGames.Domain.Promotions.Entities;
 using Fiap.CloudGames.Domain.UserGamesLibrary.Entities;
 using Fiap.CloudGames.Domain.Users.Entities;
-using Fiap.CloudGames.Domain.Orders.Entities;
 using Fiap.CloudGames.Domain.Carts.Entities;
 using Microsoft.EntityFrameworkCore;
 
