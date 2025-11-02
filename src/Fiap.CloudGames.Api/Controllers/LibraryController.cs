@@ -1,6 +1,6 @@
-﻿using Fiap.CloudGames.Application.UserGamesLibrary.Dtos;
+﻿using Fiap.CloudGames.Application.Common;
+using Fiap.CloudGames.Application.UserGamesLibrary.Dtos;
 using Fiap.CloudGames.Application.UserGamesLibrary.Services;
-using Fiap.CloudGames.Domain.Games.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -20,66 +20,73 @@ public sealed class LibraryController(ILibraryService libraryService) : Controll
     private readonly ILibraryService _libraryService = libraryService;
 
     /// <summary>
-    /// Obtém o GUID do usuário a partir do token (claim <c>userId</c>).
+    /// Tenta obter o GUID do usuário a partir do token (claim <c>userId</c>).
     /// </summary>
-    /// <exception cref="UnauthorizedAccessException">
-    /// Lançada quando a claim <c>userId</c> não existe ou não é um GUID válido.
-    /// </exception>
-    private Guid GetUserIdFromToken()
+    private bool TryGetUserId(out Guid userId)
     {
+        userId = Guid.Empty;
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId");
-        if (userIdClaim is null || !Guid.TryParse(userIdClaim.Value, out var userId))
-            throw new UnauthorizedAccessException("ID do usuário (GUID) não encontrado no token.");
-        return userId;
+        return userIdClaim is not null && Guid.TryParse(userIdClaim.Value, out userId);
     }
 
     /// <summary>
-    /// Fluxo: "Consultar Jogos da Biblioteca" com filtros
+    /// Fluxo: "Consultar Jogos da Biblioteca" com filtros.
     /// </summary>
     [HttpGet("my-games")]
-    [ProducesResponseType(typeof(IEnumerable<Game>), 200)]
-    public async Task<IActionResult> GetMyLibrary([FromQuery] LibraryQueryDto queryParams)
+    [ProducesResponseType(typeof(PagedResult<LibraryGameDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetMyLibrary([FromQuery] LibraryListRequest request, CancellationToken ct)
     {
-        var userId = GetUserIdFromToken();
-        var games = await _libraryService.GetGamesFromLibraryAsync(userId, queryParams);
-        return Ok(games);
+        if (!TryGetUserId(out var userId))
+            return Unauthorized(Problem(title: "ID do usuário não encontrado no token.", statusCode: StatusCodes.Status401Unauthorized));
+
+        var page = await _libraryService.GetGamesFromLibraryAsync(userId, request, ct);
+        return Ok(page);
     }
 
     /// <summary>
     /// Simula a compra/liberação de um jogo na biblioteca do usuário autenticado.
     /// </summary>
     /// <param name="gameId">Identificador do jogo (GUID).</param>
-    /// <returns>Mensagem de sucesso ou conflito.</returns>
+    /// <param name="ct">Token de cancelamento.</param>
     [HttpPost("buy/{gameId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> PurchaseGame(Guid gameId)
+    public async Task<IActionResult> PurchaseGame(Guid gameId, CancellationToken ct)
     {
-        var userId = GetUserIdFromToken();
+        if (!TryGetUserId(out var userId))
+            return Unauthorized(Problem(title: "ID do usuário não encontrado no token.", statusCode: StatusCodes.Status401Unauthorized));
 
-        var success = await _libraryService.AddGameToLibraryAsync(userId, gameId);
-        if (!success)
-            return Conflict(new { message = "Este jogo já está na sua biblioteca." });
+        var result = await _libraryService.AddGameToLibraryAsync(userId, gameId, ct);
 
-        return Ok(new { message = "Jogo adicionado à biblioteca com sucesso." });
+        return result switch
+        {
+            AddGameResult.Added => Ok(new { message = "Jogo adicionado à biblioteca com sucesso." }),
+            AddGameResult.AlreadyOwned => Conflict(Problem(title: "Este jogo já está na sua biblioteca.", statusCode: StatusCodes.Status409Conflict)),
+            AddGameResult.GameNotFound => NotFound(Problem(title: "Jogo não encontrado.", statusCode: StatusCodes.Status404NotFound)),
+            _ => Problem(title: "Não foi possível processar a solicitação.", statusCode: StatusCodes.Status400BadRequest)
+        };
     }
 
     /// <summary>
-    /// Fluxo: "Estorno Realizado" / "Remover Jogo"
+    /// Fluxo: "Estorno Realizado" / "Remover Jogo" da biblioteca.
     /// </summary>
+    /// <param name="gameId">Identificador do jogo (GUID).</param>
+    /// <param name="ct">Token de cancelamento.</param>
     [HttpDelete("remove/{gameId:guid}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> RefundGame(Guid gameId)
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> RefundGame(Guid gameId, CancellationToken ct)
     {
-        var userId = GetUserIdFromToken();
-        var success = await _libraryService.RemoveGameFromLibraryAsync(userId, gameId);
+        if (!TryGetUserId(out var userId))
+            return Unauthorized(Problem(title: "ID do usuário não encontrado no token.", statusCode: StatusCodes.Status401Unauthorized));
 
-        if (!success)
-        {
-            return NotFound(new { message = "Este jogo não foi encontrado na sua biblioteca." });
-        }
+        var removed = await _libraryService.RemoveGameFromLibraryAsync(userId, gameId, ct);
+        if (!removed)
+            return NotFound(Problem(title: "Este jogo não foi encontrado na sua biblioteca.", statusCode: StatusCodes.Status404NotFound));
 
         return NoContent();
     }
