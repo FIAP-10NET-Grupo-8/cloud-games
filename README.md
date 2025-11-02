@@ -183,7 +183,7 @@ graph TD
 ## Como Adicionar migrações e atualizar banco de dados 🛠️
 Abrir o Package Manager Console com o projeto Fiap.CloudGames.Infrastructure selecionado como projeto de inicialização e executar o comando:
 ```bash
-Add-Migration <MigrationName> -Context AppDbContext -OutputDir "Persistence/Migrations" -StartupProject Fiap.CloudGames.Api
+Add-Migration <MigrationName> -Context AppDbContext -StartupProject Fiap.CloudGames.Api
 ```
 
 Ao finalizar, atualizar o banco de dados com o comando:

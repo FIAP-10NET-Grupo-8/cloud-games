@@ -3,6 +3,7 @@ using System;
 using Fiap.CloudGames.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,77 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fiap.CloudGames.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251102005054_AddPromotion")]
+    partial class AddPromotion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
-
-            modelBuilder.Entity("Fiap.CloudGames.Domain.Carts.Entities.Cart", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("TotalValue")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserEmail")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("Carts", (string)null);
-                });
-
-            modelBuilder.Entity("Fiap.CloudGames.Domain.Carts.Entities.CartItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("CartId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Discount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CartId", "GameId")
-                        .IsUnique();
-
-                    b.ToTable("CartItems", (string)null);
-                });
 
             modelBuilder.Entity("Fiap.CloudGames.Domain.Games.Entities.Game", b =>
                 {
@@ -412,22 +350,6 @@ namespace Fiap.CloudGames.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Fiap.CloudGames.Domain.Carts.Entities.CartItem", b =>
-                {
-                    b.HasOne("Fiap.CloudGames.Domain.Carts.Entities.Cart", null)
-                        .WithMany("Items")
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Fiap.CloudGames.Domain.Orders.Entities.OrderItem", b =>
-                {
-                    b.HasOne("Fiap.CloudGames.Domain.Orders.Entities.Order", null)
-                        .WithMany("Items")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("Fiap.CloudGames.Domain.UserGamesLibrary.Entities.UserGameLibrary", b =>
                 {
                     b.HasOne("Fiap.CloudGames.Domain.Games.Entities.Game", "Game")
@@ -495,11 +417,6 @@ namespace Fiap.CloudGames.Infrastructure.Migrations
 
                     b.Navigation("Password")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Fiap.CloudGames.Domain.Carts.Entities.Cart", b =>
-                {
-                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Fiap.CloudGames.Domain.Games.Entities.Game", b =>
