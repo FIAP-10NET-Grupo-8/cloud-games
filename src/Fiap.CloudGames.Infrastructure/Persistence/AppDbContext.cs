@@ -3,6 +3,8 @@ using Fiap.CloudGames.Domain.Orders.Entities;
 using Fiap.CloudGames.Domain.Promotions.Entities;
 using Fiap.CloudGames.Domain.UserGamesLibrary.Entities;
 using Fiap.CloudGames.Domain.Users.Entities;
+using Fiap.CloudGames.Domain.Orders.Entities;
+using Fiap.CloudGames.Domain.Carts.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Fiap.CloudGames.Infrastructure.Persistence;
@@ -18,6 +20,8 @@ public class AppDbContext : DbContext
     public DbSet<UserGameLibrary> UserGameLibrary => Set<UserGameLibrary>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<Cart> Carts => Set<Cart>();
+    public DbSet<CartItem> CartItems => Set<CartItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
