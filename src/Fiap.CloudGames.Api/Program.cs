@@ -1,10 +1,13 @@
 using Fiap.CloudGames.Api.Middleware;
 using Fiap.CloudGames.Application.Games.Services;
 using Fiap.CloudGames.Application.Orders.Services;
+using Fiap.CloudGames.Application.Promotions.Services;
 using Fiap.CloudGames.Application.UserGamesLibrary.Services;
 using Fiap.CloudGames.Application.Users.Services;
+using Fiap.CloudGames.Domain.Carts.Repositories;
 using Fiap.CloudGames.Domain.Games.Repositories;
 using Fiap.CloudGames.Domain.Orders.Repositories;
+using Fiap.CloudGames.Domain.Promotions.Repositories;
 using Fiap.CloudGames.Domain.Shared.Interfaces;
 using Fiap.CloudGames.Domain.Shared.Options;
 using Fiap.CloudGames.Domain.UserGamesLibrary.Repositories;
@@ -12,9 +15,11 @@ using Fiap.CloudGames.Domain.Users.Interfaces;
 using Fiap.CloudGames.Domain.Users.Repositories;
 using Fiap.CloudGames.Infrastructure.Auth;
 using Fiap.CloudGames.Infrastructure.Email;
+using Fiap.CloudGames.Infrastructure.Carts.Repositories;
 using Fiap.CloudGames.Infrastructure.Games.Repositories;
 using Fiap.CloudGames.Infrastructure.Orders.Repositories;
 using Fiap.CloudGames.Infrastructure.Persistence;
+using Fiap.CloudGames.Infrastructure.Promotions.Repositories;
 using Fiap.CloudGames.Infrastructure.UserGamesLibrary.Repositories;
 using Fiap.CloudGames.Infrastructure.Users.Repositories;
 using Fiap.CloudGames.Infrastructure.Users.Seeders;
@@ -29,6 +34,7 @@ using Serilog.Formatting.Json;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
+using Fiap.CloudGames.Application.Carts.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,8 +62,8 @@ builder.Host.UseSerilog((ctx, services, configuration) =>
 
 builder.Services.AddOptions<JwtOptions>()
     .Bind(builder.Configuration.GetSection("Jwt"))
-    .Validate(o => 
-    { 
+    .Validate(o =>
+    {
         o.Validate();
         return true;
     }, "JwtOptions validation")
@@ -83,11 +89,17 @@ builder.Services.AddScoped<IUserSeeder, UserSeeder>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IGameService, GameService>();
 
+builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
+builder.Services.AddScoped<IPromotionService, PromotionService>();
+
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddScoped<ILibraryService, LibraryService>();
 builder.Services.AddScoped<IUserGameLibraryRepository, UserGameLibraryRepository>();
+
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 builder.Services.AddSingleton<IEmailService, ConsoleEmailService>();
 
@@ -102,6 +114,8 @@ builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssemblyContaining<Fiap.CloudGames.Application.Users.Validators.UserRegisterDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<Fiap.CloudGames.Application.Games.Validators.CreateGameDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<Fiap.CloudGames.Application.Orders.Validators.CreateOrderDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<Fiap.CloudGames.Application.Promotions.Validators.CreatePromotionDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<Fiap.CloudGames.Application.Carts.Validators.AddCartItemDtoValidator>();
 
 builder.Services
     .AddAuthentication(o =>
@@ -184,11 +198,11 @@ using (var scope = app.Services.CreateScope())
 
     if (app.Environment.IsDevelopment())
     {
-		var seeder = scope.ServiceProvider.GetRequiredService<IUserSeeder>();
-		using var cts = CancellationTokenSource.CreateLinkedTokenSource(app.Lifetime.ApplicationStopping);
-		cts.CancelAfter(TimeSpan.FromSeconds(30));
-		await seeder.SeedAsync(cts.Token);
-	}
+        var seeder = scope.ServiceProvider.GetRequiredService<IUserSeeder>();
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(app.Lifetime.ApplicationStopping);
+        cts.CancelAfter(TimeSpan.FromSeconds(30));
+        await seeder.SeedAsync(cts.Token);
+    }
 }
 
 // Configure the HTTP request pipeline.

@@ -13,6 +13,9 @@ public sealed class GameRepository : IGameRepository
     public async Task<IReadOnlyList<Game>> GetAllAsync(CancellationToken ct) =>
         await _db.Games.AsNoTracking().OrderBy(g => g.Title).ToListAsync(ct);
 
+    public async Task<IReadOnlyList<Game>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken ct) =>
+        await _db.Games.AsNoTracking().Where(g => ids.Contains(g.Id)).ToListAsync(ct);
+
     public Task<Game?> GetByIdAsync(Guid id, CancellationToken ct) =>
         _db.Games.AsNoTracking().FirstOrDefaultAsync(g => g.Id == id, ct);
 
