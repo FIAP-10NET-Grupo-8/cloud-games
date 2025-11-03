@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Fiap.CloudGames.Infrastructure.Persistence.Migrations
+namespace Fiap.CloudGames.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251103023510_SyncModel")]
-    partial class SyncModel
+    [Migration("20251103230118_AddUserGameLibrary")]
+    partial class AddUserGameLibrary
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
