@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Fiap.CloudGames.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AtualizarBiblioteca : Migration
+    public partial class AddUserGameLibrary : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Library",
+                name: "UserGameLibrary",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -21,15 +21,15 @@ namespace Fiap.CloudGames.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Library", x => new { x.UserId, x.GameId });
+                    table.PrimaryKey("PK_UserGameLibrary", x => new { x.UserId, x.GameId });
                     table.ForeignKey(
-                        name: "FK_Library_Games_GameId",
+                        name: "FK_UserGameLibrary_Games_GameId",
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Library_Users_UserId",
+                        name: "FK_UserGameLibrary_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -37,16 +37,26 @@ namespace Fiap.CloudGames.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Library_GameId",
-                table: "Library",
+                name: "IX_UserGameLibrary_GameId",
+                table: "UserGameLibrary",
                 column: "GameId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserGameLibrary_PurchaseDate",
+                table: "UserGameLibrary",
+                column: "PurchaseDate");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserGameLibrary_UserId",
+                table: "UserGameLibrary",
+                column: "UserId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Library");
+                name: "UserGameLibrary");
         }
     }
 }

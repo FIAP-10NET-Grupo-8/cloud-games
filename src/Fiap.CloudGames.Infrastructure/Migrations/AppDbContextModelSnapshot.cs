@@ -288,7 +288,6 @@ namespace Fiap.CloudGames.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserGameLibrary", (string)null);
-                    b.ToTable("Library", (string)null);
                 });
 
             modelBuilder.Entity("Fiap.CloudGames.Domain.Users.Entities.User", b =>
@@ -339,6 +338,14 @@ namespace Fiap.CloudGames.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("Fiap.CloudGames.Domain.Carts.Entities.CartItem", b =>
+                {
+                    b.HasOne("Fiap.CloudGames.Domain.Carts.Entities.Cart", null)
+                        .WithMany("Items")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Fiap.CloudGames.Domain.Orders.Entities.OrderItem", b =>
@@ -415,22 +422,6 @@ namespace Fiap.CloudGames.Infrastructure.Migrations
 
                     b.Navigation("Period")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Fiap.CloudGames.Domain.Carts.Entities.CartItem", b =>
-                {
-                    b.HasOne("Fiap.CloudGames.Domain.Carts.Entities.Cart", null)
-                        .WithMany("Items")
-                        .HasForeignKey("CartId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Fiap.CloudGames.Domain.Orders.Entities.OrderItem", b =>
-                {
-                    b.HasOne("Fiap.CloudGames.Domain.Orders.Entities.Order", null)
-                        .WithMany("Items")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Fiap.CloudGames.Domain.UserGamesLibrary.Entities.UserGameLibrary", b =>
