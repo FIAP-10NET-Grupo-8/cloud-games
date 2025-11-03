@@ -190,6 +190,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
+// Aviso se alguém rodar com secret de DEV fora de Development
+if (!app.Environment.IsDevelopment())
+    {
+    var cfg = app.Services.GetRequiredService<IConfiguration>();
+        if (string.Equals(cfg["Jwt:Secret"], "dev-secret-ONLY-for-locals-please-change", StringComparison.Ordinal))
+        app.Logger.LogWarning("Aplicação fora de Development usando secret de DEV. Verifique configuração de JWT.");
+    }
+
 // ---- Migrate + Seed (dev) ----
 using (var scope = app.Services.CreateScope())
 {

@@ -1,4 +1,4 @@
-# Tech Challenge - FIAP Cloud Games - 10NETT - Grupo 8 📚
+# Tech Challenge - FIAP Cloud Games - 10NETT - Grupo 8
 
 ## Sumário 📝
 
@@ -9,7 +9,8 @@
     - [Jornadas de Solução](./docs/JORNADAS.md)
 - [Como rodar o projeto localmente](#como-rodar-o-projeto-localmente)
 	- [Pré-requisitos](#pre-requisitos)
-	- [Configurar segredos em DEV](#configurar-segredos-em-dev)
+    - [Quickstart (DEV)](#quickstart-dev)
+	- [Configurar segredos em DEV (opcional)](#configurar-segredos-em-dev)
 	- [Executando a aplicação](#executando-a-aplicacao)
 - [Estrutura de pastas do Projeto](#estrutura-de-pastas-do-projeto)
 - [Arquitetura do Projeto](#arquitetura-do-projeto)
@@ -32,8 +33,36 @@
 - Git instalado para clonar o repositório. [Download Git](https://git-scm.com/downloads)
 - (Optional) Postman ou outra ferramenta para testar APIs REST. [Download Postman](https://www.postman.com/downloads/)
 
+<a id="quickstart-dev"></a>
+### Quickstart (DEV)
+
+> O arquivo **appsettings.Development.json** já está versionado com valores padrão de desenvolvimento (SQLite + JWT + usuário admin de demo). Basta:
+
+```bash
+# 1) Aplicar migrações e criar o banco local (SQLite)
+dotnet ef database update --project src/Fiap.CloudGames.Infrastructure/Fiap.CloudGames.Infrastructure.csproj --startup-project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj --context AppDbContext
+
+# 2) Subir a API
+dotnet run --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
+```
+
+Acessar o Swagger:
+
+```
+http://localhost:5000/swagger
+```
+
+Login de exemplo (seed DEV):
+
+```
+Email: admin@dev.local
+Senha: Change_me_!234
+```
 <a id="configurar-segredos-em-dev"></a>
-### Configurar segredos em DEV 🔒	
+## Configurar segredos em DEV (opcional) 🔒
+
+> **Opcional**: estes comandos **sobrescrevem** o que está no `appsettings.Development.json` (o projeto já tem `<UserSecretsId>` configurado).
+
 Configurar String de Conexão do Banco de Dados:
 ```bash
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Data Source=fiap.cloudgames.dev.db" --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
@@ -69,7 +98,7 @@ dotnet user-secrets set "AdminUser:EmailConfirmed" true --project src/Fiap.Cloud
 > - O nome do usuário administrativo não pode estar vazio.
 > - O e-mail do usuário administrativo deve estar em um formato válido.
 > - A senha temporária deverá obedecer as regras de complexidade definidas no sistema:
-> 	- Mínimo de8 caracteres
+> 	- Mínimo de **8** caracteres
 > 	- Pelo menos uma letra maiúscula
 > 	- Pelo menos uma letra minúscula
 > 	- Pelo menos um número
