@@ -1,5 +1,9 @@
 # Tech Challenge - FIAP Cloud Games - 10NETT - Grupo 8
 
+
+![Build & Tests](https://github.com/FIAP-10NET-Grupo-8/cloud-games/actions/workflows/build-and-test.yml/badge.svg)
+[![Version](https://img.shields.io/github/v/tag/FIAP-10NET-Grupo-8/cloud-games?label=version&sort=semver)](https://github.com/FIAP-10NET-Grupo-8/cloud-games/tags)
+
 ## Sumário 📝
 
 - Documentos
@@ -9,8 +13,6 @@
     - [Jornadas de Solução](./docs/JORNADAS.md)
 - [Como rodar o projeto localmente](#como-rodar-o-projeto-localmente)
 	- [Pré-requisitos](#pre-requisitos)
-    - [Quickstart (DEV)](#quickstart-dev)
-	- [Configurar segredos em DEV (opcional)](#configurar-segredos-em-dev)
 	- [Executando a aplicação](#executando-a-aplicacao)
 - [Estrutura de pastas do Projeto](#estrutura-de-pastas-do-projeto)
 - [Arquitetura do Projeto](#arquitetura-do-projeto)
@@ -27,85 +29,11 @@
 
 <a id="pre-requisitos"></a>
 ### Pré-requisitos ⚙️
-- Visual Studio2022 ou Visual Studio Code. [Download Visual Studio](https://visualstudio.microsoft.com/downloads/) | [Download VS Code](https://code.visualstudio.com/download)
-- NET8 SDK mais recente instalado. [Download .NET8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- Visual Studio 2022 ou Visual Studio Code. [Download Visual Studio](https://visualstudio.microsoft.com/downloads/) | [Download VS Code](https://code.visualstudio.com/download)
+- .NET 8 SDK mais recente instalado. [Download .NET8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 - DBeaver ou outro cliente de banco de dados compatível com SQLite. [Download DBeaver](https://dbeaver.io/download/)
 - Git instalado para clonar o repositório. [Download Git](https://git-scm.com/downloads)
-- (Optional) Postman ou outra ferramenta para testar APIs REST. [Download Postman](https://www.postman.com/downloads/)
-
-<a id="quickstart-dev"></a>
-### Quickstart (DEV)
-
-> O arquivo **appsettings.Development.json** já está versionado com valores padrão de desenvolvimento (SQLite + JWT + usuário admin de demo). Basta:
-
-```bash
-# 1) Aplicar migrações e criar o banco local (SQLite)
-dotnet ef database update --project src/Fiap.CloudGames.Infrastructure/Fiap.CloudGames.Infrastructure.csproj --startup-project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj --context AppDbContext
-
-# 2) Subir a API
-dotnet run --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
-```
-
-Acessar o Swagger:
-
-```
-http://localhost:5000/swagger
-```
-
-Login de exemplo (seed DEV):
-
-```
-Email: admin@dev.local
-Senha: Change_me_!234
-```
-<a id="configurar-segredos-em-dev"></a>
-## Configurar segredos em DEV (opcional) 🔒
-
-> **Opcional**: estes comandos **sobrescrevem** o que está no `appsettings.Development.json` (o projeto já tem `<UserSecretsId>` configurado).
-
-Configurar String de Conexão do Banco de Dados:
-```bash
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Data Source=fiap.cloudgames.dev.db" --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
-```
-
-Configurar JWT:
-```bash
-dotnet user-secrets set "Jwt:Issuer" "<issuer>" --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
-dotnet user-secrets set "Jwt:Audience" "<audience>" --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
-dotnet user-secrets set "Jwt:Secret" "<chave-secreta>" --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
-dotnet user-secrets set "Jwt:ExpiryMinutes" "<tempo-expiracao-minutos>" --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
-```
-> Obs: Exemplos de geração de chave aleatória:
-> - PowerShell:
-> ```powershell
-> $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+=<>?"; $secret = -join (1..64 | ForEach-Object { $chars[(Get-Random -Maximum $chars.Length)] }); Write-Output $secret
-> ```
-> - Linux/macOS:
-> ```bash
-> head -c64 /dev/urandom | base64
-> ```
-
-Configurar Senha do Administrador:
-```bash
-dotnet user-secrets set "AdminUser:Name" "<nome-usuario>" --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
-dotnet user-secrets set "AdminUser:Email" "<email-usuario>" --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
-dotnet user-secrets set "AdminUser:Password" "<senha-temporaria>" --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
-dotnet user-secrets set "AdminUser:Role" "Administrator" --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
-dotnet user-secrets set "AdminUser:Status" "Active" --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
-dotnet user-secrets set "AdminUser:EmailConfirmed" true --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
-```
-> Observações:
-> - O nome do usuário administrativo não pode estar vazio.
-> - O e-mail do usuário administrativo deve estar em um formato válido.
-> - A senha temporária deverá obedecer as regras de complexidade definidas no sistema:
-> 	- Mínimo de **8** caracteres
-> 	- Pelo menos uma letra maiúscula
-> 	- Pelo menos uma letra minúscula
-> 	- Pelo menos um número
-> 	- Pelo menos um caractere especial
-> - O role do usuário administrativo deve ser "Administrator" para garantir privilégios administrativos.
-> - O status do usuário administrativo deve ser "Active" para permitir o login imediato.
-> - O e-mail do usuário administrativo deve ser marcado como confirmado (true) para permitir o acesso imediato.
+- (Opcional) Postman ou outra ferramenta para testar APIs REST. [Download Postman](https://www.postman.com/downloads/)
 
 <a id="executando-a-aplicacao"></a>
 ### Executando a aplicação ▶️
@@ -141,8 +69,16 @@ dotnet run --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
 
 Acessar a API via navegador (ou se preferir, Postman):
 ```
-http://localhost:5000/swagger
+https://localhost:7185/swagger/index.html
 ```
+
+Login de exemplo (seed DEV):
+
+```
+Email: admin@dev.local
+Senha: Change_me_!234
+```
+
 ---
 
 <a id="estrutura-de-pastas-do-projeto"></a>
