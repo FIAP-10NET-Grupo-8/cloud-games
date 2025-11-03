@@ -159,6 +159,6 @@ Update-Database -Context AppDbContext -StartupProject Fiap.CloudGames.Api
 > Obs: Se preferir rodar no CLI do .NET, vai ser necessário utilizar as ferramentas (e suas versões) listadas no manifesto, então rode os comandos abaixo:
 > ```bash
 > dotnet tool restore # restaura ferramentas listadas no manifest
-> dotnet tool run dotnet-ef -- migrations add <MigrationName> --project src/Fiap.CloudGames.Infrastructure --startup-project src/Fiap.CloudGames.Api --context AppDbContext --output-dir "Persistence/Migrations"
+> dotnet tool run dotnet-ef -- migrations add <MigrationName> --project src/Fiap.CloudGames.Infrastructure --startup-project src/Fiap.CloudGames.Api --context AppDbContext --output-dir "Migrations"
 > dotnet tool run dotnet-ef -- database update --project src/Fiap.CloudGames.Infrastructure --startup-project src/Fiap.CloudGames.Api --context AppDbContext
 > ```
