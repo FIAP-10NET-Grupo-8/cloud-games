@@ -1,4 +1,5 @@
 ﻿using Fiap.CloudGames.Api.Controllers;
+using Fiap.CloudGames.Application.Common;
 using Fiap.CloudGames.Application.UserGamesLibrary.Dtos;
 using Fiap.CloudGames.Application.UserGamesLibrary.Services;
 using Fiap.CloudGames.Domain.Games.Entities;
@@ -28,6 +29,7 @@ namespace Fiap.CloudGames.Tests.UserGamesLibrary
 
             var userClaims = new Claim[] { new Claim("userId", _testUserId.ToString()) };
             var userPrincipal = new ClaimsPrincipal(new ClaimsIdentity(userClaims, "TestAuth"));
+
             _controller = new LibraryController(_mockService.Object)
             {
                 ControllerContext = new ControllerContext
@@ -38,26 +40,21 @@ namespace Fiap.CloudGames.Tests.UserGamesLibrary
         }
 
         [Fact]
-        public async Task GetMyLibrary_QuandoChamado_DeveRetornarOkComListaDeJogos()
+        public async Task GetMyLibrary_QuandoChamado_DeveRetornarOkComPageResult()
         {
-            var queryParams = new LibraryQueryDto();
-            var jogoDeTeste = Game.Create(
-                    title: "Test Game",
-                    description: "Descrição de teste",
-                    price: 19.99m,
-                    releaseDate: DateTime.UtcNow.AddYears(-1),
-                    developer: "Dev Teste",
-                    publisher: "Pub Teste",
-                    genre: "RPG",
-                    platforms: "PC"
-                );
+            var queryParams = new LibraryListRequest(null, null, null, null, null, null, null);
 
-            var listaDeJogos = new List<Game> { jogoDeTeste };
+            var listaDeJogos = new PagedResult<LibraryGameDto>(
+                new List<LibraryGameDto>(), 0, 1, 20, 0
+            );
 
-            _mockService.Setup(s => s.GetGamesFromLibraryAsync(_testUserId, queryParams))
-                .ReturnsAsync(listaDeJogos);
+            _mockService.Setup(s => s.GetGamesFromLibraryAsync(
+                _testUserId,
+                queryParams,
+                It.IsAny<CancellationToken>()
+            )).ReturnsAsync(listaDeJogos);
 
-            var resultado = await _controller.GetMyLibrary(queryParams);
+            var resultado = await _controller.GetMyLibrary(queryParams, CancellationToken.None);
 
             var okResult = resultado.Should().BeOfType<OkObjectResult>().Subject;
             okResult.Value.Should().Be(listaDeJogos);
@@ -66,11 +63,15 @@ namespace Fiap.CloudGames.Tests.UserGamesLibrary
         [Fact]
         public async Task PurchaseGame_QuandoSucesso_DeveRetornarOk()
         {
+            // ARRANGE
             var gameId = Guid.NewGuid();
-            _mockService.Setup(s => s.AddGameToLibraryAsync(_testUserId, gameId))
-                .ReturnsAsync(true);
+            _mockService.Setup(s => s.AddGameToLibraryAsync(
+                _testUserId,
+                gameId,
+                It.IsAny<CancellationToken>()
+            )).ReturnsAsync(AddGameResult.Added);
 
-            var resultado = await _controller.PurchaseGame(gameId);
+            var resultado = await _controller.PurchaseGame(gameId, CancellationToken.None);
 
             resultado.Should().BeOfType<OkObjectResult>();
         }
@@ -79,22 +80,43 @@ namespace Fiap.CloudGames.Tests.UserGamesLibrary
         public async Task PurchaseGame_QuandoJogoJaExiste_DeveRetornarConflict()
         {
             var gameId = Guid.NewGuid();
-            _mockService.Setup(s => s.AddGameToLibraryAsync(_testUserId, gameId))
-                .ReturnsAsync(false);
+            _mockService.Setup(s => s.AddGameToLibraryAsync(
+                _testUserId,
+                gameId,
+                It.IsAny<CancellationToken>()
+            )).ReturnsAsync(AddGameResult.AlreadyOwned);
 
-            var resultado = await _controller.PurchaseGame(gameId);
+            var resultado = await _controller.PurchaseGame(gameId, CancellationToken.None);
 
             resultado.Should().BeOfType<ConflictObjectResult>();
+        }
+
+        [Fact]
+        public async Task PurchaseGame_QuandoJogoNaoExiste_DeveRetornarNotFound()
+        {
+            var gameId = Guid.NewGuid();
+            _mockService.Setup(s => s.AddGameToLibraryAsync(
+                _testUserId,
+                gameId,
+                It.IsAny<CancellationToken>()
+            )).ReturnsAsync(AddGameResult.GameNotFound);
+
+            var resultado = await _controller.PurchaseGame(gameId, CancellationToken.None);
+
+            resultado.Should().BeOfType<NotFoundObjectResult>();
         }
 
         [Fact]
         public async Task RefundGame_QuandoSucesso_DeveRetornarNoContent()
         {
             var gameId = Guid.NewGuid();
-            _mockService.Setup(s => s.RemoveGameFromLibraryAsync(_testUserId, gameId))
-                .ReturnsAsync(true);
+            _mockService.Setup(s => s.RemoveGameFromLibraryAsync(
+                _testUserId,
+                gameId,
+                It.IsAny<CancellationToken>()
+            )).ReturnsAsync(true);
 
-            var resultado = await _controller.RefundGame(gameId);
+            var resultado = await _controller.RefundGame(gameId, CancellationToken.None); // 👈 Corrigido
 
             resultado.Should().BeOfType<NoContentResult>();
         }
@@ -103,10 +125,13 @@ namespace Fiap.CloudGames.Tests.UserGamesLibrary
         public async Task RefundGame_QuandoJogoNaoEncontrado_DeveRetornarNotFound()
         {
             var gameId = Guid.NewGuid();
-            _mockService.Setup(s => s.RemoveGameFromLibraryAsync(_testUserId, gameId))
-                .ReturnsAsync(false);
+            _mockService.Setup(s => s.RemoveGameFromLibraryAsync(
+                _testUserId,
+                gameId,
+                It.IsAny<CancellationToken>()
+            )).ReturnsAsync(false);
 
-            var resultado = await _controller.RefundGame(gameId);
+            var resultado = await _controller.RefundGame(gameId, CancellationToken.None);
 
             resultado.Should().BeOfType<NotFoundObjectResult>();
         }
