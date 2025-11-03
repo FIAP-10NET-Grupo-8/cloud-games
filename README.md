@@ -149,8 +149,8 @@ graph TD
 > Visão geral dos domínios e eventos do sistema.
 
 <p align="center">
-  <a href="https://miro.com/app/board/SEU-BOARD-ID/" title="Abrir board no Miro">
-    <img src="https://github.com/user-attachments/assets/3eb83fd4-5157-4656-96a4-7b8efca9b169" alt="Event Storm – visão geral" width="900">
+  <a href="https://miro.com/app/board/uXjVJHt40qc=/" title="Abrir board no Miro">
+    <img src="https://github.com/user-attachments/assets/21780ae9-4d58-4d1b-8dec-c3ac4afcf938" alt="Event Storm – visão geral" width="900">
   </a>
 </p>
 
