@@ -26,14 +26,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{DAA9E0B3-AD27-403F-BAA3-D2DABBA965A2}"
 	ProjectSection(SolutionItems) = preProject
+		docs\ENDPOINTS.md = docs\ENDPOINTS.md
+		docs\Fiap.CloudGames.API.postman_collection.json = docs\Fiap.CloudGames.API.postman_collection.json
 		docs\JORNADAS.md = docs\JORNADAS.md
 		docs\TC-NETT-FASE-1.md = docs\TC-NETT-FASE-1.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "jornadas", "jornadas", "{B2487D84-65AA-48B0-A8B9-CACF4A5DD89F}"
 	ProjectSection(SolutionItems) = preProject
-		docs\jornadas\jornada-admin-gerenciamento-usuarios.md = docs\jornadas\jornada-admin-gerenciamento-usuarios.md
 		docs\jornadas\jornada-admin-gerenciamento-jogos.md = docs\jornadas\jornada-admin-gerenciamento-jogos.md
+		docs\jornadas\jornada-admin-gerenciamento-usuarios.md = docs\jornadas\jornada-admin-gerenciamento-usuarios.md
 		docs\jornadas\jornada-autenticacao-login.md = docs\jornadas\jornada-autenticacao-login.md
 		docs\jornadas\jornada-cadastro-autenticacao.md = docs\jornadas\jornada-cadastro-autenticacao.md
 		docs\jornadas\jornada-cadastro-self-registration.md = docs\jornadas\jornada-cadastro-self-registration.md

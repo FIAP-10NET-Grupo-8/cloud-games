@@ -11,6 +11,7 @@
     - [Processo de Colaboração](./PROCESSO-COLABORACAO.md)
     - [Fluxos](./FLUXOS.md)
     - [Jornadas de Solução](./docs/JORNADAS.md)
+    - [Endpoints](./docs/ENDPOINTS.md)
 - [Como rodar o projeto localmente](#como-rodar-o-projeto-localmente)
 	- [Pré-requisitos](#pre-requisitos)
 	- [Executando a aplicação](#executando-a-aplicacao)
@@ -68,10 +69,12 @@ Executar a aplicação:
 dotnet run --project src/Fiap.CloudGames.Api/Fiap.CloudGames.Api.csproj
 ```
 
-Acessar a API via navegador (ou se preferir, Postman):
+Acessar a API via navegador:
 ```
 https://localhost:7185/swagger/index.html
 ```
+
+> Obs: se preferir, via Postman utilizando a <a href="./docs/Fiap.CloudGames.API.postman_collection.json" target="_blank">coleção em .json disponível na pasta `docs`</a>
 
 Login de exemplo (seed DEV):
 
@@ -92,7 +95,8 @@ Senha: Change_me_!234
 │ └── Fiap.CloudGames.Infrastructure/           # Implementações de persistência e integrações externas
 ├── tests/
 │ └── Fiap.CloudGames.Tests/                    # Testes unitários
-└── spikes-e-pocs/                              # Provas de conceito e experimentos
+├── spikes-e-pocs/                              # Provas de conceito e experimentos
+└── docs/                                       # Documentos
 ```
 
 ---
@@ -149,7 +153,7 @@ graph TD
 > Visão geral dos domínios e eventos do sistema.
 
 <p align="center">
-  <a href="https://miro.com/app/board/uXjVJHt40qc=/" title="Abrir board no Miro">
+  <a href="https://miro.com/app/board/uXjVJHt40qc=/" target="_blank" title="Abrir board no Miro">
     <img src="https://github.com/user-attachments/assets/21780ae9-4d58-4d1b-8dec-c3ac4afcf938" alt="Event Storm – visão geral" width="900">
   </a>
 </p>
