@@ -27,7 +27,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{DAA9E0B3-AD27-403F-BAA3-D2DABBA965A2}"
 	ProjectSection(SolutionItems) = preProject
 		docs\ENDPOINTS.md = docs\ENDPOINTS.md
-		Fiap.CloudGames.API.postman_collection.json = Fiap.CloudGames.API.postman_collection.json
+		docs\Fiap.CloudGames.API.postman_collection.json = docs\Fiap.CloudGames.API.postman_collection.json
 		docs\JORNADAS.md = docs\JORNADAS.md
 		docs\TC-NETT-FASE-1.md = docs\TC-NETT-FASE-1.md
 	EndProjectSection
