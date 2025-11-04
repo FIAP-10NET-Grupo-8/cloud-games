@@ -1,8 +1,10 @@
+using Fiap.CloudGames.Application.Common;
 using Fiap.CloudGames.Application.Users.Dtos;
 using Fiap.CloudGames.Application.Users.Services;
 using Fiap.CloudGames.Domain.Users.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mime;
 using System.Security.Claims;
 
 namespace Fiap.CloudGames.Api.Controllers;
@@ -10,8 +12,10 @@ namespace Fiap.CloudGames.Api.Controllers;
 /// <summary>
 /// Endpoints para gerenciamento de usuários.
 /// </summary>
+/// <param name="userService">Serviço de usuários utilizado pelos endpoints.</param>
 [ApiController]
 [Route("api/[controller]")]
+[Produces(MediaTypeNames.Application.Json)]
 public class UsersController(IUserService userService) : ControllerBase
 {
 	private readonly IUserService _userService = userService;
@@ -24,11 +28,14 @@ public class UsersController(IUserService userService) : ControllerBase
 	/// <returns>JWT token.</returns>
 	[HttpPost("login")]
 	[AllowAnonymous]
+	[ProducesResponseType(typeof(LoginResultDto), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> Login([FromBody] LoginDto dto, CancellationToken ct)
 	{
-		var jwt = await _userService.AuthenticateAsync(dto.Email, dto.Password, ct);
-		if (jwt == null) return Unauthorized(new { message = "Credenciais inválidas." });
-		return Ok(new { token = jwt });
+		var result = await _userService.AuthenticateAsync(dto.Email, dto.Password, ct);
+		if (result == null) return Unauthorized(BasicResult.Unauthorized("Credenciais inválidas."));
+		return Ok(result);
 	}
 
 	/// <summary>
@@ -37,6 +44,9 @@ public class UsersController(IUserService userService) : ControllerBase
 	/// </summary>
 	[HttpGet]
 	[Authorize(Roles = nameof(UserRole.Administrator))]
+	[ProducesResponseType(typeof(IEnumerable<UserDto>), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	public async Task<IActionResult> GetAll(CancellationToken ct)
 	{
 		var all = await _userService.GetAllAsync(ct);
@@ -50,10 +60,15 @@ public class UsersController(IUserService userService) : ControllerBase
 	/// <param name="ct"></param>
 	[HttpGet("{id:guid}")]
 	[Authorize(Roles = nameof(UserRole.Administrator))]
+	[ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
 	{
 		var user = await _userService.GetByIdAsync(id, ct);
-		if (user == null) return NotFound(new { message = "Usuário não encontrado." });
+		if (user == null) return NotFound(BasicResult.NotFound("Usuário não encontrado."));
 		return Ok(user);
 	}
 
@@ -63,13 +78,17 @@ public class UsersController(IUserService userService) : ControllerBase
 	/// <param name="ct"></param>
 	[HttpGet("me")]
 	[Authorize]
+	[ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetMe(CancellationToken ct)
 	{
 		var email = User.FindFirstValue(ClaimTypes.Email);
-		if (string.IsNullOrWhiteSpace(email)) return Unauthorized(new { message = "Email não presente no token." });
+		if (string.IsNullOrWhiteSpace(email)) return Unauthorized(BasicResult.Unauthorized("Email não presente no token."));
 
 		var user = await _userService.GetByEmailAsync(email, ct);
-		if (user == null) return Unauthorized(new { message = "Usuário não encontrado ou token inválido." });
+		if (user == null) return Unauthorized(BasicResult.Unauthorized("Usuário não encontrado ou token inválido."));
 		return Ok(user);
 	}
 
@@ -81,6 +100,8 @@ public class UsersController(IUserService userService) : ControllerBase
 	/// <returns>Usuário criado.</returns>
 	[HttpPost("register")]
 	[AllowAnonymous]
+	[ProducesResponseType(typeof(UserDto), StatusCodes.Status201Created)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	public async Task<IActionResult> Register([FromBody] UserRegisterDto dto, CancellationToken ct)
 	{
 		var created = await _userService.RegisterAsync(dto, ct);
@@ -94,11 +115,13 @@ public class UsersController(IUserService userService) : ControllerBase
 	/// <param name="ct"></param>
 	[HttpPost("confirm")]
 	[AllowAnonymous]
+	[ProducesResponseType(typeof(BasicResult), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	public async Task<IActionResult> Confirm([FromBody] ConfirmEmailDto dto, CancellationToken ct)
 	{
 		var ok = await _userService.ConfirmEmailAsync(dto.Token, ct);
-		if (!ok) return BadRequest(new { message = "Token inválido ou expirado." });
-		return Ok(new { message = "Email confirmado com sucesso." });
+		if (!ok) return BadRequest(BasicResult.BadRequest("Token inválido ou expirado."));
+		return Ok(BasicResult.Success("Email confirmado com sucesso."));
 	}
 
 	/// <summary>
@@ -108,10 +131,13 @@ public class UsersController(IUserService userService) : ControllerBase
 	/// <param name="ct"></param>
 	//  SECURITY: avaliar trocar para 202 + resposta genérica em produção
 	[HttpPost("forgot-password")]
-    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto, CancellationToken ct)
+	[AllowAnonymous]
+	[ProducesResponseType(typeof(ForgotPasswordResultDto), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto, CancellationToken ct)
 	{
 		var token = await _userService.GeneratePasswordResetAsync(dto.Email, ct);
-		return Ok(new { resetToken = token });
+		return Ok(new ForgotPasswordResultDto(token));
 	}
 
 	/// <summary>
@@ -121,11 +147,13 @@ public class UsersController(IUserService userService) : ControllerBase
 	/// <param name="ct"></param>
 	[HttpPost("reset-password")]
 	[AllowAnonymous]
+	[ProducesResponseType(typeof(BasicResult), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	public async Task<IActionResult> Reset([FromBody] ResetPasswordDto dto, CancellationToken ct)
 	{
 		var ok = await _userService.ResetPasswordAsync(dto.Token, dto.NewPassword, ct);
-		if (!ok) return BadRequest(new { message = "Token de redefinição inválido ou expirado." });
-		return Ok(new { message = "Senha redefinida com sucesso." });
+		if (!ok) return BadRequest(BasicResult.BadRequest("Token de redefinição inválido ou expirado."));
+		return Ok(BasicResult.Success("Senha redefinida com sucesso."));
 	}
 
 	/// <summary>
@@ -135,6 +163,11 @@ public class UsersController(IUserService userService) : ControllerBase
 	/// <param name="ct"></param>
 	[HttpPost]
 	[Authorize(Roles = nameof(UserRole.Administrator))]
+	[ProducesResponseType(typeof(UserDto), StatusCodes.Status201Created)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> CreateByAdmin([FromBody] AdminUserCreateDto dto, CancellationToken ct)
 	{
 		var created = await _userService.CreateByAdminAsync(dto, ct);
@@ -148,11 +181,13 @@ public class UsersController(IUserService userService) : ControllerBase
 	/// <param name="ct"></param>
 	[HttpPost("first-access")]
 	[AllowAnonymous]
+	[ProducesResponseType(typeof(BasicResult), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	public async Task<IActionResult> FirstAccess([FromBody] FirstAccessDto dto, CancellationToken ct)
 	{
 		var ok = await _userService.FirstAccessAsync(dto.Token, dto.NewPassword, ct);
-		if (!ok) return BadRequest(new { message = "Token inválido ou expirado." });
-		return Ok(new { message = "Senha definida com sucesso." });
+		if (!ok) return BadRequest(BasicResult.BadRequest("Token inválido ou expirado."));
+		return Ok(BasicResult.Success("Senha definida com sucesso."));
 	}
 
 	/// <summary>
@@ -162,10 +197,15 @@ public class UsersController(IUserService userService) : ControllerBase
 	/// <param name="ct"></param>
 	[HttpPut]
 	[Authorize(Roles = nameof(UserRole.Administrator))]
+	[ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> Update([FromBody] AdminUserUpdateDto dto, CancellationToken ct)
 	{
 		var updated = await _userService.UpdateAsync(dto, ct);
-		if (updated == null) return NotFound(new { message = "Usuário não encontrado." });
+		if (updated == null) return NotFound(BasicResult.NotFound("Usuário não encontrado."));
 		return Ok(updated);
 	}
 
@@ -176,6 +216,9 @@ public class UsersController(IUserService userService) : ControllerBase
 	/// <param name="ct"></param>
 	[HttpDelete("{id:guid}")]
 	[Authorize(Roles = nameof(UserRole.Administrator))]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
 	{
 		await _userService.DeleteAsync(id, ct);
@@ -189,9 +232,12 @@ public class UsersController(IUserService userService) : ControllerBase
 	/// <param name="ct"></param>
 	[HttpPost("{id:guid}/restore")]
 	[Authorize(Roles = nameof(UserRole.Administrator))]
+	[ProducesResponseType(typeof(BasicResult), StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
 	public async Task<IActionResult> Restore(Guid id, CancellationToken ct)
 	{
 		await _userService.RestoreAsync(id, ct);
-		return Ok(new { message = "Usuário restaurado." });
+		return Ok(BasicResult.Success("Usuário restaurado."));
 	}
 }

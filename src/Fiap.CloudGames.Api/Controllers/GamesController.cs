@@ -1,4 +1,5 @@
-﻿using Fiap.CloudGames.Application.Games.Dtos;
+﻿using Fiap.CloudGames.Application.Common;
+using Fiap.CloudGames.Application.Games.Dtos;
 using Fiap.CloudGames.Application.Games.Services;
 using Fiap.CloudGames.Domain.Users.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -26,7 +27,7 @@ public sealed class GamesController(IGameService gameService) : ControllerBase
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(typeof(IEnumerable<GameListItemDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<GameListItemDto>>> GetAll(CancellationToken ct)
+    public async Task<IActionResult> GetAll(CancellationToken ct)
     {
         var games = await _gameService.GetAllAsync(ct);
         return Ok(games);
@@ -42,10 +43,10 @@ public sealed class GamesController(IGameService gameService) : ControllerBase
     [AllowAnonymous]
     [ProducesResponseType(typeof(GameDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<GameDto>> GetById(Guid id, CancellationToken ct)
+    public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
     {
         var game = await _gameService.GetByIdAsync(id, ct);
-        if (game is null) return NotFound(new { message = "Jogo não encontrado." });
+        if (game is null) return NotFound(BasicResult.NotFound("Jogo não encontrado."));
         return Ok(game);
     }
 
@@ -59,7 +60,9 @@ public sealed class GamesController(IGameService gameService) : ControllerBase
     [Authorize(Roles = nameof(UserRole.Administrator))]
     [ProducesResponseType(typeof(GameDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<GameDto>> Create([FromBody] CreateGameDto dto, CancellationToken ct)
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> Create([FromBody] CreateGameDto dto, CancellationToken ct)
     {
         var created = await _gameService.CreateAsync(dto, ct);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
@@ -75,11 +78,13 @@ public sealed class GamesController(IGameService gameService) : ControllerBase
     [HttpPut("{id:guid}")]
 	[Authorize(Roles = nameof(UserRole.Administrator))]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateGameDto dto, CancellationToken ct)
     {
         var ok = await _gameService.UpdateAsync(id, dto, ct);
-        if (!ok) return NotFound(new { message = "Jogo não encontrado." });
+        if (!ok) return NotFound(BasicResult.NotFound("Jogo não encontrado."));
         return NoContent();
     }
 
@@ -92,11 +97,13 @@ public sealed class GamesController(IGameService gameService) : ControllerBase
     [HttpDelete("{id:guid}")]
 	[Authorize(Roles = nameof(UserRole.Administrator))]
 	[ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         var ok = await _gameService.DeleteAsync(id, ct);
-        if (!ok) return NotFound(new { message = "Jogo não encontrado." });
+        if (!ok) return NotFound(BasicResult.NotFound("Jogo não encontrado."));
         return NoContent();
     }
 }

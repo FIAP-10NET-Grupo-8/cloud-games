@@ -34,15 +34,15 @@ public class UserService(IUserRepository repository, IJwtService jwtService, IEm
 		return user == null ? null : Map(user);
 	}
 
-	public async Task<string?> AuthenticateAsync(string email, string password, CancellationToken ct)
+	public async Task<LoginResultDto?> AuthenticateAsync(string email, string password, CancellationToken ct)
 	{
 		var user = await _repository.GetByEmailAsync(email, ct);
 		if (user == null) return null;
 		if (!user.VerifyPassword(password)) return null;
 		if (!user.EmailConfirmed) return null;
 		if (user.Status != UserStatus.Active) return null;
-		var jwt = _jwtService.GenerateToken(user.Id, user.Name, user.Email, user.Role.ToString(), ct);
-		return jwt;
+		var (token, expiresAt) = _jwtService.GenerateToken(user.Id, user.Name, user.Email, user.Role.ToString(), ct);
+		return new LoginResultDto(token, expiresAt);
 	}
 
 	public async Task<UserDto> RegisterAsync(UserRegisterDto dto, CancellationToken ct)

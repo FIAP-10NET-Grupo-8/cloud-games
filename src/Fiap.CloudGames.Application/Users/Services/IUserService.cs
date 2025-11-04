@@ -8,7 +8,7 @@ public interface IUserService
 	Task<UserDto?> GetByIdAsync(Guid id, CancellationToken ct);
 	Task<UserDto?> GetByEmailAsync(string email, CancellationToken ct);
 
-	Task<string?> AuthenticateAsync(string email, string password, CancellationToken ct);
+	Task<LoginResultDto?> AuthenticateAsync(string email, string password, CancellationToken ct);
 
 	Task<UserDto> RegisterAsync(UserRegisterDto dto, CancellationToken ct);
 	Task<string> GenerateEmailConfirmationAsync(string email, CancellationToken ct);

@@ -29,6 +29,7 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
     [Authorize]
     [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Create([FromBody] CreateOrderDto dto, CancellationToken ct)
     {
         Request.Headers.TryGetValue("Idempotency-Key", out var idemKey);
@@ -47,6 +48,7 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
     [HttpGet("mine")]
     [Authorize]
     [ProducesResponseType(typeof(PagedResult<OrderResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetMine([FromQuery] string? status, [FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken ct = default)
     {
         var userEmail = User.FindFirstValue(ClaimTypes.Email);
@@ -60,7 +62,9 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
     [HttpGet]
     [Authorize(Roles = nameof(UserRole.Administrator))]
     [ProducesResponseType(typeof(PagedResult<OrderResponseDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAll([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] string? status, [FromQuery] int page = 1, [FromQuery] int pageSize = 50, CancellationToken ct = default)
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status403Forbidden)]
+	public async Task<IActionResult> GetAll([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] string? status, [FromQuery] int page = 1, [FromQuery] int pageSize = 50, CancellationToken ct = default)
     {
         var result = await _orderService.GetAllAsync(startDate, endDate, status, page, pageSize, ct);
         return Ok(result);
@@ -74,8 +78,8 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
     [HttpGet("{id:guid}")]
     [Authorize]
     [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken ct)
     {
         var order = await _orderService.GetByIdAsync(id, ct);
@@ -100,8 +104,8 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
     [Authorize]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> RequestRefund(Guid id, [FromBody] RefundRequestDto dto, CancellationToken ct)
     {
         var order = await _orderService.GetByIdAsync(id, ct);
@@ -117,6 +121,6 @@ public sealed class OrdersController(IOrderService orderService) : ControllerBas
         if (!accepted)
             return BadRequest(Problem(title: "Não foi possível solicitar o estorno.", statusCode: StatusCodes.Status400BadRequest));
 
-        return Accepted(new { message = "Solicitação de estorno registrada." });
+        return Accepted(BasicResult.Accepted("Solicitação de estorno registrada."));
     }
 }
