@@ -12,7 +12,7 @@ public class JwtService(IOptions<JwtOptions> options) : IJwtService
 {
 	private readonly JwtOptions _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
 
-	public string GenerateToken(Guid id, string name, string email, string role, CancellationToken ct)
+	public (string, DateTime) GenerateToken(Guid id, string name, string email, string role, CancellationToken ct)
 	{
 		var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Secret));
 		var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -26,16 +26,20 @@ public class JwtService(IOptions<JwtOptions> options) : IJwtService
             new Claim("userId", id.ToString()),
         };
 
-		var token = new JwtSecurityToken(
+		var expiresAt = DateTime.UtcNow.AddMinutes(_options.ExpiryMinutes);
+
+		var securityToken = new JwtSecurityToken(
 			issuer: _options.Issuer,
 			audience: _options.Audience,
 			claims: claims,
-			expires: DateTime.UtcNow.AddMinutes(_options.ExpiryMinutes),
+			expires: expiresAt,
 			signingCredentials: creds
 		);
 
-		return new JwtSecurityTokenHandler().WriteToken(token);
+		var token = new JwtSecurityTokenHandler().WriteToken(securityToken);
+
+		return (token, expiresAt);
 	}
 
-	public string GenerateToken(User user, CancellationToken ct) => GenerateToken(user.Id, user.Name, user.Email.Address, user.Role.ToString(), ct);
+	public (string, DateTime) GenerateToken(User user, CancellationToken ct) => GenerateToken(user.Id, user.Name, user.Email.Address, user.Role.ToString(), ct);
 }
