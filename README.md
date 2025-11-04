@@ -20,6 +20,7 @@
 	- [Tecnologias e escolhas](#tecnologias-e-escolhas)
     - [Bibliotecas principais utilizadas](#bibliotecas-principais-utilizadas)
 	- [Diagrama de dependências entre camadas](#diagrama-de-dependencias-entre-camadas)
+    - [Event Storm (Miro)](#event-storm-miro)
 - [Como Adicionar migrações e atualizar banco de dados](#como-adicionar-migracoes-e-atualizar-banco-de-dados)
 
 ---
@@ -141,6 +142,19 @@ graph TD
     D --> C
     D --> E["Banco de Dados - SQLite"]
 ```
+
+<a id="event-storm-miro"></a>
+## Event Storm (Miro) 🧠
+
+> Visão geral dos domínios e eventos do sistema.
+
+<p align="center">
+  <a href="https://miro.com/app/board/uXjVJHt40qc=/" title="Abrir board no Miro">
+    <img src="https://github.com/user-attachments/assets/21780ae9-4d58-4d1b-8dec-c3ac4afcf938" alt="Event Storm – visão geral" width="900">
+  </a>
+</p>
+
+> Clique na imagem para abrir o board no Miro (somente visualização).
 
 ---
 
