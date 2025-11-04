@@ -1,4 +1,5 @@
 using Fiap.CloudGames.Api.Middleware;
+using Fiap.CloudGames.Application.Carts.Services;
 using Fiap.CloudGames.Application.Games.Services;
 using Fiap.CloudGames.Application.Orders.Services;
 using Fiap.CloudGames.Application.Promotions.Services;
@@ -14,9 +15,10 @@ using Fiap.CloudGames.Domain.UserGamesLibrary.Repositories;
 using Fiap.CloudGames.Domain.Users.Interfaces;
 using Fiap.CloudGames.Domain.Users.Repositories;
 using Fiap.CloudGames.Infrastructure.Auth;
-using Fiap.CloudGames.Infrastructure.Email;
 using Fiap.CloudGames.Infrastructure.Carts.Repositories;
+using Fiap.CloudGames.Infrastructure.Email;
 using Fiap.CloudGames.Infrastructure.Games.Repositories;
+using Fiap.CloudGames.Infrastructure.Games.Seeders;
 using Fiap.CloudGames.Infrastructure.Orders.Repositories;
 using Fiap.CloudGames.Infrastructure.Persistence;
 using Fiap.CloudGames.Infrastructure.Promotions.Repositories;
@@ -34,7 +36,6 @@ using Serilog.Formatting.Json;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
-using Fiap.CloudGames.Application.Carts.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,6 +89,8 @@ builder.Services.AddScoped<IUserSeeder, UserSeeder>();
 
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IGameService, GameService>();
+
+builder.Services.AddScoped<IGameSeeder, GameSeeder>();
 
 builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
@@ -206,11 +209,16 @@ using (var scope = app.Services.CreateScope())
 
     if (app.Environment.IsDevelopment())
     {
-        var seeder = scope.ServiceProvider.GetRequiredService<IUserSeeder>();
-        using var cts = CancellationTokenSource.CreateLinkedTokenSource(app.Lifetime.ApplicationStopping);
-        cts.CancelAfter(TimeSpan.FromSeconds(30));
-        await seeder.SeedAsync(cts.Token);
-    }
+        var userSeeder = scope.ServiceProvider.GetRequiredService<IUserSeeder>();
+        using var ctsUserSeeder = CancellationTokenSource.CreateLinkedTokenSource(app.Lifetime.ApplicationStopping);
+        ctsUserSeeder.CancelAfter(TimeSpan.FromSeconds(30));
+        await userSeeder.SeedAsync(ctsUserSeeder.Token);
+
+        var gameSeeder = scope.ServiceProvider.GetRequiredService<IGameSeeder>();
+        using var ctsGameSeeder = CancellationTokenSource.CreateLinkedTokenSource(app.Lifetime.ApplicationStopping);
+        ctsGameSeeder.CancelAfter(TimeSpan.FromSeconds(30));
+        await gameSeeder.SeedAsync(ctsGameSeeder.Token);
+	}
 }
 
 // Configure the HTTP request pipeline.
